@@ -286,7 +286,8 @@ class ChecklistCreate_ extends Component {
             }
             return q
         })
-        this.setState({ questions: newState })
+        this.setState({ questions: newState } ,this.groupTypes)
+        
 
 
     }

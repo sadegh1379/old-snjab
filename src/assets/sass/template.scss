@@ -776,6 +776,232 @@ input,textarea{
 }
 
 
+// indicator kartabl tabel style **********************
+.indicator-tbl {
+  direction: rtl;
+  margin-top: 10px;
+  border-collapse: collapse;
+  width: 98%;
+  margin: auto;
+  margin-bottom: 20px;
+}
+.indicator-tr{
+  text-align:center;
+  background: #dddd;
+
+}
+.indicator-th {
+  text-align : center !important;
+  padding-top : 10px;
+  padding-bottom:  10px;
+  color: #555555;
+  font-size:  13px;
+  font-weight : bolder;
+  font-family : iransansBold;
+}
+.indicator-td {
+  text-align: center;
+  padding-top:  13px;
+  padding-bottom:  13px;
+  font-size:  12px;
+  color: #444444;
+  font-weight: 700;
+
+}
+.indicator-tdd{
+  text-align:center;
+  padding-top: 13px;
+  padding-bottom: 13px;
+  background: #f1f1f1;
+  border-left: none;
+  border-bottom: 1px solid #d8d8d8;
+  border-top: 1px solid #d8d8d8;
+  font-size: 12px;
+  color: #444444;
+  font-weight:700;
+}
+.indicator-kol{
+  width: 100%;
+  height: auto;
+  background-color: #ffffff;
+  margin: 0 auto;
+  // border: 2px solid #dcdcdc;
+  border-radius: 20px;
+  border-bottom: 46px;
+}
+.indicator-topnav {
+  margin-right: 10px;
+  height: 60px;
+  margin-top: -20px;
+}
+.indicator-active {
+  float: right;
+  display: block;
+  color: #9c9c9c;
+  text-align: center;
+  padding: 14px 10px;
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: bold;
+  text-decoration: none !important;
+  
+}
+.indicator-active:hover {
+  color: #9c9c9c !important;
+  cursor: default;
+}
+
+.indicator-icon {
+  font-size: 13px;
+  position: absolute;
+  margin-left: -14px;
+  color: #a29e9e;
+}
+.indicator-drowp {
+  float: right;
+  margin-top: 12px;
+  border: none;
+  background: white;
+  text-align: right;
+  direction: rtl;
+  color: grey;
+  font-family: iransansBold;
+  font-weight: bold;
+  font-size: 12px !important;
+  cursor: pointer;
+
+}
+.khatRight{
+  width: 2px;
+  height: 20px;
+  background: #e2e2e2;
+  display: inline-block;
+  margin-top: 11px;
+  margin-right: 10px;
+  // float: right;
+}
+
+.indicator-searchContainer{
+  float: left;
+  margin-bottom: -16px;
+}
+
+
+.indicator-search {
+  color: #969696;
+  margin-top: -32px;
+  position: absolute;
+  margin-right: 250px;
+}
+.indicator-area {
+  border: 1px solid #cac8c8;
+  border-radius: 20px;
+  text-align:right;
+  font-size: 11px;
+  margin-left: 36px;
+  padding-left:107px;
+  padding-right :  11px;
+  margin-top : 9px;
+  padding-top : 10px;
+  padding-bottom : 10px;
+  direction: rtl;
+  width: 98%;
+  outline: none;
+}
+.indicator-excelBox {
+  border: 2px solid lightgrey;
+  display: flex;
+  border-radius: 60px;
+  background-color: #f1f1f1;
+  justify-content: center;
+  align-items: center;
+  // opacity:0.4;
+  margin-right: 20px;
+  font-family: 'lalezar';
+  cursor: pointer;
+  height: 35px;
+  // margin-top: 20px;
+
+}
+.indicator-excelIcon {
+  width: 30px ;
+}
+.indicator-RightTitle {
+  color: #555555;
+  font-weight: bold;
+  display: flex;
+  flex-direction: row;
+  // justify-content: center;
+  align-items: center !important;
+  padding-top: 20px;
+  padding-right: 20px;
+}
+
+// indicator calendar
+.indicator-collector-modal-infobox{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid lightgrey;
+  border-top: 1px solid lightgrey;
+  margin-top: 80px;
+  margin-bottom: 50px;
+  padding: 5px;
+
+  .info-box{
+    width: 100%;
+        height: 70px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px;
+    border-left: 2px solid lightgrey;
+
+  }
+  .info-box-border-0{
+    border: 0 !important;
+  }
+  .user-image{
+        width: 50px;
+        height: 50px;
+        border-radius: 50px;
+  }
+  .box-title{
+    // color: black;
+    opacity: 0.9;
+    font-weight: bolder;
+    font-size: large;
+  }
+  .circle-box{
+    width: 50px;
+    height: 50px;
+    border-radius: 50px;
+    background-color: #2196F3;
+  }
+
+}
+
+.top-nav-error{
+    background-color:#F8BBD0;
+    padding: 10px;
+    border-radius:  5px;
+    display: flex;
+    justify-content:  space-between;
+    align-items:  center;
+    font-weight:  bolder;
+    color: rgb(243,4,7) !important;
+    margin-bottom: 10px;
+}
+.top-nav-warn-icon{
+    width: 45px;
+
+}
+
+// end indicator kartabl styles ****************
+
+
 @import "indicator-dashboard";
 @import "error_report";
 @import "indicator";

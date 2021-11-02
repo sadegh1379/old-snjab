@@ -6,3 +6,4 @@ export * from "./checklistIndex";
 export * from "./checkListDeatail";
 export * from "./checkListPage"
 export * from "./checkListDashboard";
+export * from './NewChecklistCreate';

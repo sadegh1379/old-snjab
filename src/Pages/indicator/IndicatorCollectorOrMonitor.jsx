@@ -984,6 +984,8 @@ export class IndicatorCollectorOrMonitor extends Component {
                                                 placeholder="بخش مورد نظر را انتخاب کنید"
                                                 isClearable
                                                 onChange={(v, d) => {
+                                                  
+
                                                     userActions.handleChangeSelect.call(this, v, d, null, null, (f) => {
                                                         this.getCollectorIndicators(1, null, f || '')
                                                     })

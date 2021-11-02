@@ -1622,4 +1622,4 @@ function NewIndicatorListComponent(props) {
 
     )
 }
-export default NewIndicatorListComponent
+export  {NewIndicatorListComponent}

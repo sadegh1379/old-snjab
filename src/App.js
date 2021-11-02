@@ -25,6 +25,8 @@ import {
     IndicatorDetailComponent,
     IndicatorChecklistComponent,
     IndicatorCollectorOrMonitorComponent,
+    NewIndicatorCollectorOrMonitor,
+    NewIndicatorListComponent,
     IndicatorDashbaord,
     SafetyRelatedIndicatorComponent
 } from './Pages/indicator';
@@ -35,7 +37,8 @@ import {
     CheckListIndexComponent,
     CheckListPageComponent,
     ChecklistCreate,
-    CheckListDashbaord
+    CheckListDashbaord,
+    NewChecklistCreate
 } from "./Pages/checklist"
 
 
@@ -49,8 +52,6 @@ import {
 } from './Pages/pdp';
 import { PWA } from './Pages/pwa/pwa';
 import UpdateUsers from "./_helpers/updateUsers";
-import NewIndicatorListComponent from './Pages/indicator/NewIndicatorListComponent';
-import { NewChecklistCreate } from './Pages/checklist/NewChecklistCreate';
 
 class App extends Component {
     constructor(props) {
@@ -110,8 +111,8 @@ class App extends Component {
                     <PrivateRoute path="/indicator" component={IndicatorIndexComponent} exact/>
                     <PrivateRoute path="/indicator/safety_related" component={SafetyRelatedIndicatorComponent} exact/>
                     <PrivateRoute path="/indicator/dashboard" component={IndicatorDashbaord} exact/>
-                    <PrivateRoute path="/indicator/monitor" component={IndicatorCollectorOrMonitorComponent} exact/>
-                    <PrivateRoute path="/indicator/collector" component={IndicatorCollectorOrMonitorComponent} exact/>
+                    <PrivateRoute path="/indicator/monitor" component={NewIndicatorCollectorOrMonitor} exact/>
+                    <PrivateRoute path="/indicator/collector" component={NewIndicatorCollectorOrMonitor} exact/>
                     <PrivateRoute path="/indicator/list" component={NewIndicatorListComponent} exact/>
                     <PrivateRoute path="/indicator/list/detail/:id" component={IndicatorDetailComponent} exact/>
                     <PrivateRoute path="/indicator/list/create" component={IndicatorCreateComponent} exact/>
