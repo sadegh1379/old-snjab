@@ -148,6 +148,8 @@ function PeriodicityModal({setPeriodicityModal , periodicityModal , periodData ,
     if(periodData === undefined){
         return null
     }
+    console.log('current' , currentIndicator)
+    console.log('pero' , periodData);
     return (
         <Modal
                 aria-labelledby="transition-modal-title"
@@ -194,11 +196,11 @@ function PeriodicityModal({setPeriodicityModal , periodicityModal , periodData ,
                                                     return (
                                                         <Box key={i} component='tr' className={` animated fadeIn`} >
                                                             <Box component='td' className={class_name}>
-                                                                {
+                                                                {/* {
                                                                    peroidReturn(currentIndicator.measure_interval) === 1 ? 
                                                                    periodMonth[i%4] : '-'
-                                                                }
-                                                                {/* سه ماهه اول */}
+                                                                } */}
+                                                                -
                                                             </Box>
                                                             <Box component='td' className={class_name}>
                                                                 {item.numerator}

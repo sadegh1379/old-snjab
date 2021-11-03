@@ -248,7 +248,7 @@ class IndicatorIndex extends React.Component {
                                                     <div className="card text-center border-0">
                                                         <div className="card-body border-0">
                                                             <NavLink className="d-flex flex-column align-items-center      indexs btn"
-                                                                     to="/indicator/dashboard">
+                                                                     to="/indicator/dashboard/null">
                                                                 <img src={reportIcon} alt="" width="95"
                                                                      height="95"/>
                                                                 <span className="lalezar text-center text-dark my-2">داشبورد شاخص</span>

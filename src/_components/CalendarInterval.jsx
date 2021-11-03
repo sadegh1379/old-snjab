@@ -17,7 +17,7 @@ const daysStyle = {
 
 export class CalendarInterval extends Component {
     btnHandler = (data, interval_number,dayOfYear=null) => {
-       
+    
         if(dayOfYear!=null){
             const year = this.props.year;
             const m=moment(`${year}/${interval_number+1}/${dayOfYear}`, 'jYYYY/jMM/jDD');

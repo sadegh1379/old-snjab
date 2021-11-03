@@ -118,11 +118,11 @@ class IntervalValue_ extends Component {
         this.setState({equal, numerators, denumerators});
     }
     showChecklist = () => {
-        // if (this.state.ward) {
-        this.setState({checklist: true});
-        // } else {
-        //     userActions.failure('لطفاً بخش را انتخاب کنید.')
-        // }
+        if (this.state.ward) {
+            this.setState({checklist: true});
+        } else {
+            userActions.failure('لطفاً بخش را انتخاب کنید.')
+        }
     }
 
     closeChecklist = () => {
@@ -271,10 +271,10 @@ class IntervalValue_ extends Component {
 
     }
 
-    async submitChecklist(e , ward) {
+    async submitChecklist(e) {
         e.preventDefault();
 
-        const {menuItems, questions} = this.state;
+        const {menuItems, ward, questions} = this.state;
         const {isCollector, indicator, interval, formula} = this.props;
 
         const answerer_info = menuItems.map(m => ({
@@ -317,7 +317,6 @@ class IntervalValue_ extends Component {
             })
         } else {
             userActions.failure('لطفاً بخش را انتخاب کنید.')
-
         }
     }
 
@@ -327,6 +326,7 @@ class IntervalValue_ extends Component {
             if (numerator_indicator_id && denumerator_indicator_id && numerator_indicator_id === denumerator_indicator_id) {
 
                 const res = await this.props.dispatch(userActions.API('post', `/v2/indicator/interval_by_ward?id=${numerator_indicator_id}`, {wards: [ward._id],rotation:ROTATION[this.props.indicator.measure_interval]}));
+                console.log(res.data)
                 const interval = res.data.wards[0].values.find(v => v.interval_number === this.props.interval.interval_number);
                 if (interval != null) {
                     this.setState({
@@ -422,27 +422,21 @@ class IntervalValue_ extends Component {
                                         </div>
                                     </div>
                                     <div className="col-lg-7 col-sm-12 ">
-                                    {isCollector ? (
-                                                    indicator.report_type !== 'پرسشنامه' && indicator.report_type !== 'چک لیست'
-                                                        ? (
-                                                            <div className="w-100 pt-3 pb-4">
-                                                            <div className="form-group text-right ">
-                                                                <label className="iran-sans_Bold text-right text-dark"> بخش </label>
-                                                                <Select className="text-center custom-select-2"
-                                                                        value={ward}
-                                                                        name="ward"
-                                                                        placeholder=""
-                                                                        onChange={(v, d) => userActions.handleChangeSelect.call(this, v, d, null, null, this.wardOnChange)}
-                                                                        options={wards}
-                                                                        getOptionLabel={opt => opt.name}
-                                                                        getOptionValue={opt => opt._id}
-                                                                        id="ward"
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                        ) :null
-                                    ) : null}
-                                       
+                                        <div className="w-100 pt-3 pb-4">
+                                            <div className="form-group text-right ">
+                                                <label className="iran-sans_Bold text-right text-dark"> بخش </label>
+                                                <Select className="text-center custom-select-2"
+                                                        value={ward}
+                                                        name="ward"
+                                                        placeholder=""
+                                                        onChange={(v, d) => userActions.handleChangeSelect.call(this, v, d, null, null, this.wardOnChange)}
+                                                        options={wards}
+                                                        getOptionLabel={opt => opt.name}
+                                                        getOptionValue={opt => opt._id}
+                                                        id="ward"
+                                                />
+                                            </div>
+                                        </div>
                                         {
                                             this.props.indicator.has_menu_item && this.state.menuItems &&
 
@@ -478,26 +472,17 @@ class IntervalValue_ extends Component {
                                                 </div>
                                             </div>
                                         }
-                                        <div className="monitor col mt-3">
+                                        <div className="monitor col ">
                                             {isCollector ? (
                                                     indicator.report_type === 'پرسشنامه' || indicator.report_type === 'چک لیست'
                                                         ?
-                                                        // <button
-                                                        //     className={`btn btn-blue d-block mx-auto my-4 rounded-pill px-5 
-                                                        //     ${!ward ? 'disabled' : ''}`
-                                                        // }
-                                                        //     onClick={this.showChecklist}>
-                                                        //     <span className="px-1">تکمیل</span>
-                                                        //     <span> {indicator.report_type}</span>
-
-                                                        // </button>
                                                         <button
-                                                        className={`btn btn-blue d-block mx-auto my-4 rounded-pill px-5 `}
-                                                        onClick={this.showChecklist}>
-                                                        <span className="px-1">تکمیل</span>
-                                                        <span> {indicator.report_type}</span>
+                                                            className={`btn btn-blue d-block mx-auto my-4 rounded-pill px-5 ${!ward ? 'disabled' : ''}`}
+                                                            onClick={this.showChecklist}>
+                                                            <span className="px-1">تکمیل</span>
+                                                            <span> {indicator.report_type}</span>
 
-                                                    </button>
+                                                        </button>
                                                         :
                                                         <div className="text-dark text-center iran-sans_Bold py-3 ">لطفا
                                                             مقادیر را در فـرمول
@@ -1040,41 +1025,13 @@ class IntervalValue_ extends Component {
     }
 }
 
-class _ChecklistView extends React.Component {
-    constructor(props){
-        super()
-        this.state = {
-            ward : ''
-        }
-    }
-  
-    async componentDidMount() {
-        if (!this.props.globalStorage.wards.length) {
-            this.props.dispatch(userActions.getWards())
-        }
-    }
+class ChecklistView extends React.Component {
 
     render() {
 
         return (
-            <form onSubmit={(e)=>this.props.submit(e,this.state.ward)} className="p-4  text-right">
+            <form onSubmit={this.props.submit} className="p-4  text-right">
                 <div className="container-fluid shadow rounded  py-2 pb-4 bg-white mt-5 ">
-                <div className="w-100 pt-3 pb-4 text-center d-flex justify-content-center">
-                                            <div className="form-group w-50 text-right ">
-                                                <label className="iran-sans_Bold text-right text-dark"> بخش </label>
-                                                <Select className="text-center custom-select-2"
-                                                        value={this.state.ward}
-                                                        name="ward"
-                                                        placeholder=""
-                                                        onChange={(v)=> this.setState({ward : v})}
-                                                        // onChange={(v, d) => userActions.handleChangeSelect.call(this, v, d, null, null, this.wardOnChange)}
-                                                        options={this.props.globalStorage.wards}
-                                                        getOptionLabel={opt => opt.name}
-                                                        getOptionValue={opt => opt._id}
-                                                        id="ward"
-                                                />
-                                            </div>
-                </div>
                 {this.props.report_type && this.props.checklist_info &&
                     <>
                         <div className="row d-flex justify-content-center titleVlaue p-3 ">
@@ -1277,6 +1234,7 @@ class SelectCollector_ extends Collector_Monitor {
 
     }
     addCollectors = (selectedUsers) => {
+        console.log(selectedUsers)
         this.setState({selectedUsers})
     }
     save = () => {
@@ -1513,6 +1471,7 @@ class SelectMonitor_ extends Collector_Monitor {
             user_id: '',
             wards: []
         })
+        console.log(monitors)
         this.setState({monitors})
     }
     getMonitors = () => {
@@ -1528,6 +1487,7 @@ class SelectMonitor_ extends Collector_Monitor {
                         id: monitor.user.id,
                     };
                     monitor.wards_old = [...monitor.wards];
+                    console.log(monitor)
                 })
                 this.setState({monitors});
             })
@@ -1619,6 +1579,7 @@ class SelectMonitor_ extends Collector_Monitor {
 
         }
         if (oldMonitors.length) {
+            console.log(oldMonitors)
             await oldMonitors.map(await this.updateIndicatorMonitor);
 
         }
@@ -1954,6 +1915,4 @@ class Print extends React.Component {
 const SelectCollector = connect()(SelectCollector_);
 const SelectMonitor = connect((state) => ({globalStorage: state.globalStorage}))(SelectMonitor_);
 const IntervalValue = connect((state) => ({globalStorage: state.globalStorage}))(IntervalValue_);
-const ChecklistView = connect((state) => ({globalStorage: state.globalStorage}))(_ChecklistView);
-
 export {SelectCollector, SelectMonitor, IntervalValue, ChecklistView, Print}

@@ -110,7 +110,7 @@ class App extends Component {
                     <PrivateRoute path="/pdp" component={Education} />
                     <PrivateRoute path="/indicator" component={IndicatorIndexComponent} exact/>
                     <PrivateRoute path="/indicator/safety_related" component={SafetyRelatedIndicatorComponent} exact/>
-                    <PrivateRoute path="/indicator/dashboard" component={IndicatorDashbaord} exact/>
+                    <PrivateRoute path="/indicator/dashboard/:indicator_id" component={IndicatorDashbaord} exact/>
                     <PrivateRoute path="/indicator/monitor" component={NewIndicatorCollectorOrMonitor} exact/>
                     <PrivateRoute path="/indicator/collector" component={NewIndicatorCollectorOrMonitor} exact/>
                     <PrivateRoute path="/indicator/list" component={NewIndicatorListComponent} exact/>

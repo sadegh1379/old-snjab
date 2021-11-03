@@ -31,6 +31,7 @@ class IndicatorDashbaord_ extends Component {
     constructor() {
         super();
         this.state = {
+            
             chart_data: null,
             polar: false,
             wards: [],
@@ -95,6 +96,10 @@ class IndicatorDashbaord_ extends Component {
     }
 
     componentDidMount() {
+        if(this.props.match.params.indicator_id !== 'null'){
+            const id = this.props.match.params.indicator_id
+            this.getIndicator({id : id})
+        }
         if (!this.props.globalStorage.indicators.length) {
             this.props.dispatch(
                 userActions.getIndicator(this.props.globalStorage.year)

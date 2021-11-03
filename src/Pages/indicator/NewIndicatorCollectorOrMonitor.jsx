@@ -714,38 +714,38 @@ export class IndicatorCollectorOrMonitor extends Component {
         this.setState({ boxes });
         return interval;
     };
-    openReport = () => {
-        if (this.state.isCollector) {
-            this.getWards(this.state.indicator.id).then(res => {
-                const wards = res.data.map(w => {
-                    w.id = w._id;
-                    return w;
-                });
-                this.setState({ wards }, () => {
-                    if (wards.length == 1) {
-                        this.setState({ ward: [wards[0]] }, () => {
-                            this.getChart();
-                        });
-                    } else {
-                        this.getChart();
-                    }
+    openReport = (indicator_id) => {
+        window.location.href=`/indicator/dashboard/${indicator_id}`;
 
-                    this.setState({ isChartModalOpen: true });
-                });
-            });
+        // if (this.state.isCollector) {
+        //     this.getWards(this.state.indicator.id).then(res => {
+        //         const wards = res.data.map(w => {
+        //             w.id = w._id;
+        //             return w;
+        //         });
+        //         this.setState({ wards }, () => {
+        //             if (wards.length == 1) {
+        //                 this.setState({ ward: [wards[0]] }, () => {
+        //                     this.getChart();
+        //                 });
+        //             } else {
+        //                 this.getChart();
+        //             }
 
-        } else {
-            const { wards } = this.state;
-            if (wards.length == 1) {
-                this.setState({ ward: [wards[0]] }, () => {
-                    this.getChart();
-                });
-            } else {
-                this.getChart();
-            }
-
-            this.setState({ isChartModalOpen: true });
-        }
+        //             this.setState({ isChartModalOpen: true });
+        //         });
+        //     });
+        // } else {
+        //     const { wards } = this.state;
+        //     if (wards.length == 1) {
+        //         this.setState({ ward: [wards[0]] }, () => {
+        //             this.getChart();
+        //         });
+        //     } else {
+        //         this.getChart();
+        //     }
+        //     this.setState({ isChartModalOpen: true });
+        // }
 
     }
     async getChart() {
@@ -938,13 +938,18 @@ export class IndicatorCollectorOrMonitor extends Component {
         if (name === 'ماهانه' || name === 'سالانه' || name === 'سه ماه یکبار' || name === 'شش ماه یکبار') {
             return (
                 <p onClick={() => {
-                    this.setState({
-                        periodicityModal: true
-                    })
-                    this.getIndicatorPeriodicity(data.id)
-                    this.setState({
-                        currentIndicator: data
-                    })
+                    if(data.report_type == 'پک لیست' || data.report_type == 'پرسشنامه'){
+                        this.detailIndicator(data)
+                    }else{
+                        this.setState({
+                            periodicityModal: true
+                        })
+                        this.getIndicatorPeriodicity(data.id)
+                        this.setState({
+                            currentIndicator: data
+                        })
+                    }
+                  
                 }} style={{ textDecoration: 'underline', cursor: 'pointer' }}>{name}</p>
             )
         } else {
@@ -1169,7 +1174,6 @@ export class IndicatorCollectorOrMonitor extends Component {
                                         {/* <FilterList className="indicator-icon" /> */}
                                     </a>
                                     <a
-                                     style={{borderLeft : '2px solid grey'}}
                                     className="indicator-active p-1 mt-2 " href="#home">فیلتـر</a>
                                     {/* <div  className="khatRight"></div> */}
 
@@ -1181,7 +1185,7 @@ export class IndicatorCollectorOrMonitor extends Component {
                                     </select> */}
                                     <a
                                    
-                                     className="indicator-active " href="#home">بخش یا واحد متولی</a>
+                                     className="indicator-active mr-2" href="#home">بخش یا واحد متولی</a>
                                     
                                     <select  
                                     className="indicator-drowp"
@@ -1305,7 +1309,7 @@ export class IndicatorCollectorOrMonitor extends Component {
                     portalClassName="full_screen_modal monitorScreenModal"
                 >
                {/* top warning nav */}
-                 
+               <h1 className="text-white">monitor screen</h1>
                     {indicator && interval && (
                         <IntervalValue
                             addNewInterval={this.addNewInterval}

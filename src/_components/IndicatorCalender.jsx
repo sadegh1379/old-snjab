@@ -597,7 +597,9 @@ class IndicatorCalender extends Component {
                     <>
                     {!this.props.only_me && <button className="btn btn-link" data-tip="حذف"  onClick={()=>this.deleteChecklistRecord(item.certificate)}><img src={trash} alt="حذف" width={30}/></button>}
                     <button className="btn btn-link" onClick={() => this.openDetailRecordChecklist(item)}
-                            data-tip="جزئیات"><img src={DocIcon} alt="جزئیات" width={30}/><ReactTooltip type="dark"
+                            data-tip="جزئیات">
+                            <img src={DocIcon} alt="جزئیات" width={30}/>
+                            <ReactTooltip type="dark"
                                                                                                         html={true}/>
                     </button>
                     </>),
@@ -817,7 +819,7 @@ class IndicatorCalender extends Component {
                                     </div>
                                     <div className="card align-items-center mt-3 border-0 bg-transparent">
                                         <button
-                                            onClick={this.props.openReport }
+                                            onClick={()=>this.props.openReport(this.state.indicator.id) }
                                             className="btn text-blue bg-white  rounded-pill px-4 py-2 my-2 w-100 text-center"
                                         >گـزارش آمــاری
                                         </button>
@@ -1051,9 +1053,12 @@ class IndicatorCalender extends Component {
                     }
 
                 </Modal>
+
                 {/*Check list value*/}
                 <Modal
                     isOpen={this.state.checklist}
+                    // isOpen={true}
+
                     onRequestClose={this.closeChecklist}
                     shouldCloseOnOverlayClick={false}
                     portalClassName="full_screen_modal checklistModalView"
