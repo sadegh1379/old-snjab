@@ -75,7 +75,8 @@ class IntervalValue_ extends Component {
             equal: props.interval ? props.interval.average : '',
             checklist: false,
             messages: props.messages || [],
-            text:''
+            text:'',
+            numeratorZero : false
         }
         this.submitFormula = this.submitFormula.bind(this);
         this.afterOpenModal = this.afterOpenModal.bind(this);
@@ -201,9 +202,15 @@ class IntervalValue_ extends Component {
 
     async submitFormula() {
         const {isCollector, indicator, interval, formula} = this.props;
-        const {ward, numerators, denumerators, description,text} = this.state;
-        const numerator_values = numerators.filter(itm => userActions.onlyDigit(itm));
-        const denumerator_values = denumerators.filter(itm => userActions.onlyDigit(itm));
+        const {ward, numerators, denumerators, description,text , numeratorZero} = this.state;
+        let numerator_values = numerators.filter(itm => userActions.onlyDigit(itm));
+        let denumerator_values = denumerators.filter(itm => userActions.onlyDigit(itm));
+
+        if(indicator.has_menu_item & indicator.report_type !== 'چک لیست' && indicator.report_type !== 'پرسشنامه' && !numeratorZero){
+            numerator_values = [1]
+            denumerator_values = [1]
+        }
+
         if (isCollector) {
             if (ward) {
 
@@ -211,7 +218,44 @@ class IntervalValue_ extends Component {
 
                     this.props.CloseModal();
                 } else {
-                    if (numerator_values.length) {
+                    // zero numerator
+                    if(numeratorZero){
+                            if (!interval.id) {
+                                const addIntervalRes = await this.props.addNewInterval(interval);
+                                interval.id = addIntervalRes.id;
+                            }
+                            const answerer_info = this.state.menuItems?this.state.menuItems.map(m => ({
+                                menu_item_id: m.id,
+                                value: typeof m.value === 'object' ? m.value.id || m.value._id || m.value.value : m.value
+                            })):[];
+                            const params = {
+                                answerer_info,
+                                infos: {
+                                    formula_id: formula.id,
+                                    interval_id: interval.id,
+                                    ward_id: ward._id,
+                                    description
+                                },
+                                values: [
+                                    {
+                                        title: "numerator",
+                                        values: [0]
+                                    },
+                                    {
+                                        title: "denumerator",
+                                        values: [0]
+                                    }
+                                ],
+                                text
+                            }
+
+                            const res = await this.props.dispatch(userActions.API('post', '/v2/upload_indicator_formula_values', params));
+                            userActions.successToast(res.data.message);
+                            this.props.CloseModal(true);
+                      
+                    
+                    }else{
+                        if (numerator_values.length) {
                         if (denumerator_values.length) {
                             if (!interval.id) {
                                 const addIntervalRes = await this.props.addNewInterval(interval);
@@ -250,7 +294,7 @@ class IntervalValue_ extends Component {
                     } else {
                         userActions.failure('لطفاً مقادیر صورت را وارد کنید.')
                     }
-
+                    }
                 }
             } else {
                 userActions.failure('لطفاً بخش را انتخاب کنید.');
@@ -326,7 +370,6 @@ class IntervalValue_ extends Component {
             if (numerator_indicator_id && denumerator_indicator_id && numerator_indicator_id === denumerator_indicator_id) {
 
                 const res = await this.props.dispatch(userActions.API('post', `/v2/indicator/interval_by_ward?id=${numerator_indicator_id}`, {wards: [ward._id],rotation:ROTATION[this.props.indicator.measure_interval]}));
-                console.log(res.data)
                 const interval = res.data.wards[0].values.find(v => v.interval_number === this.props.interval.interval_number);
                 if (interval != null) {
                     this.setState({
@@ -385,7 +428,7 @@ class IntervalValue_ extends Component {
 
         const {globalStorage, formula, isCollector, indicator, interval} = this.props;
         const {wards} = globalStorage;
-        const {ward, num_help_popover, denum_help_popover, equal, description, questions, menuItems, checklist_info, messages} = this.state;
+        const {ward, num_help_popover, denum_help_popover, equal, description, questions, menuItems, checklist_info, messages , numeratorZero} = this.state;
         return (
             <>
                 <Media query="(min-width: 770px)" render={() =>
@@ -441,39 +484,64 @@ class IntervalValue_ extends Component {
                                             this.props.indicator.has_menu_item && this.state.menuItems &&
 
                                             <div className="container-fluid shadow text-right rounded  py-2 pb-4 bg-white mt-5 ">
-                                                <div className="row d-flex justify-content-center  p-3 ">
-                                                    <div
-                                                        className="px-5   bg-white text-dark rounded-pill boxshadow   text-center py-1  lalezar h5  ">اطلاعات
-                                                        پــایه
-                                                    </div>
+                                                 <div style={{
+                                                        display :'flex',
+                                                        flexDirection:'row',
+                                                        alignItems:'center',
+                                                        justifyContent:'space-between',
+                                                        border :'3px solid #104c82',
+                                                        padding : '10px',
+                                                        borderRadius :'10px',
+                                                        cursor:'pointer',
+                                                        margin :'20px 0'
+                                                  }} onClick={()=>this.setState({numeratorZero : !this.state.numeratorZero})}>
+                                                   <div>بدون مقدار (صفر)</div>
+                                                    <i className={`fa fa-2x ${this.state.numeratorZero ? 'fa-check-square text-primary' : 'fa-square text-black-50' }`}></i>
                                                 </div>
-                                                <div className="row d-flex justify-content-center py-3 px-1">
-                                                    {this.state.menuItems.map((m, i) =>
-                                                        <div className="col-6 my-3 position-relative" key={i}>
-                                                            <label htmlFor=""> {m.item}</label>
-                                                            <div className="pt-2 pb-4 ">
-                                                                <InputGenerator
-                                                                    readOnly={this.state.readOnly}
-                                                                    dispatch={this.props.dispatch}
-                                                                    type={m.item_type}
-                                                                    globalStorage={this.props.globalStorage}
-                                                                    placeholder={m.placeholder || m.place_holder}
-                                                                    options={m.options ? userActions.generateSelectLabelValue(m.options) : []}
-                                                                    onChange={(data) => {
-                                                                        this.onChangeInfo(m, data)
-                                                                    }}
-                                                                    value={m.value}
-                                                                />
-                                                            </div>
+                                              
+                                                {
+                                                    !numeratorZero ? (
+                                                        <>
+                                                        <div className="row d-flex justify-content-center animated fadeInRight  p-3 ">
+                                                              <div
+                                                                   className="px-5   bg-white text-dark rounded-pill boxshadow   text-center py-1  lalezar h5  ">اطلاعات
+                                                                  پــایه
+                                                              </div>
+                                                        </div>
+                                                        <div className="row d-flex justify-content-center py-3 px-1 animated fadeInRight">
+                                                            {this.state.menuItems.map((m, i) =>
+                                                                <div className="col-6 my-3 position-relative" key={i}>
+                                                                    <label htmlFor=""> {m.item}</label>
+                                                                    <div className="pt-2 pb-4 ">
+                                                                        <InputGenerator
+                                                                            readOnly={this.state.readOnly}
+                                                                            dispatch={this.props.dispatch}
+                                                                            type={m.item_type}
+                                                                            globalStorage={this.props.globalStorage}
+                                                                            placeholder={m.placeholder || m.place_holder}
+                                                                            options={m.options ? userActions.generateSelectLabelValue(m.options) : []}
+                                                                            onChange={(data) => {
+                                                                                this.onChangeInfo(m, data)
+                                                                            }}
+                                                                            value={m.value}
+                                                                        />
+                                                                    </div>
+
+                                                                </div>
+                                                            )}
 
                                                         </div>
-                                                    )}
-
-                                                </div>
+                                                        </>
+                                                    ) : null
+                                                }
+                                                
                                             </div>
                                         }
-                                        <div className="monitor col ">
-                                            {isCollector ? (
+                                        {
+                                            !numeratorZero ? (
+                                                <>
+                                                <div className="monitor col ">
+                                                  {isCollector ? (
                                                     indicator.report_type === 'پرسشنامه' || indicator.report_type === 'چک لیست'
                                                         ?
                                                         <button
@@ -506,7 +574,7 @@ class IntervalValue_ extends Component {
                                                                     name={"numerator_" + i}
                                                                     className="border-0  text-center"
                                                                     style={{width: 100, fontSize: '.8em'}}
-                                                                    readOnly={indicator.report_type === 'پرسشنامه' || indicator.report_type === 'چک لیست' || itm.toString() === '1' || formula.numerator_indicator_id}
+                                                                    readOnly={indicator.report_type === 'پرسشنامه' || indicator.report_type === 'چک لیست' || itm.toString() === '1' || formula.numerator_indicator_id }
                                                                     onChange={(e) => {
                                                                         userActions.handleChangeInput.call(this, e, 'number')
                                                                     }}
@@ -646,11 +714,16 @@ class IntervalValue_ extends Component {
                                                 </div>
                                                 <ReactTooltip type="dark" html={true}/>
                                             </div>
-                                        </div>
-                                        <div className="leg text-center">
-                                            <img src={Payeh}/>
-                                        </div>
-                                        <div className="d-flex w-100 justify-content-center pb-4">
+                                             </div>
+                                             <div className="leg text-center">
+                                                  <img src={Payeh}/>
+                                             </div>
+                                             </>
+                                            ):null
+                                        }
+                                        
+                                      
+                                        <div className="d-flex w-100 mt-4 justify-content-center pb-4">
                                             {isCollector &&
                                             <button
                                                 className="btn btn-blue rounded-pill col-md-4 col-sm-6 col-10 mx-4 my-1"
@@ -755,38 +828,54 @@ class IntervalValue_ extends Component {
                                             this.props.indicator.has_menu_item && this.state.menuItems &&
 
                                             <div className="container-fluid text-right shadow rounded  py-2 pb-4 bg-white mt-5 ">
-                                                <div className="row d-flex justify-content-center p-3 ">
-                                                    <div
-                                                        className="px-5   bg-white text-dark rounded-pill boxshadow   text-center py-1  lalezar h5  ">اطلاعات
-                                                        پــایه
-                                                    </div>
+                                                    <div style={{
+                                                            display :'flex',
+                                                            flexDirection:'row',
+                                                            alignItems:'center',
+                                                            justifyContent:'space-between',
+                                                            border :'3px solid #104c82',
+                                                            padding : '10px',
+                                                            borderRadius :'10px',
+                                                            cursor:'pointer',
+                                                            margin :'20px 0'
+                                                    }} onClick={()=>this.setState({numeratorZero : !this.state.numeratorZero})}>
+                                                    <div>بدون مقدار (صفر)</div>
+                                                        <i className={`fa fa-2x ${this.state.numeratorZero ? 'fa-check-square text-primary' : 'fa-square text-black-50' }`}></i>
                                                 </div>
-                                                <div className="row d-flex justify-content-center py-3 px-1">
-                                                    {this.state.menuItems.map((m, i) =>
-                                                        <div className="col-12 my-3 position-relative" key={i}>
-                                                            <label htmlFor=""> {m.item}</label>
-                                                            <div className="pt-2 pb-4 ">
-                                                                <InputGenerator
-                                                                    readOnly={this.state.readOnly}
-                                                                    dispatch={this.props.dispatch}
-                                                                    type={m.item_type}
-                                                                    globalStorage={this.props.globalStorage}
-                                                                    placeholder={m.placeholder || m.place_holder}
-                                                                    options={m.options ? userActions.generateSelectLabelValue(m.options) : []}
-                                                                    onChange={(data) => {
-                                                                       this.onChangeInfo(m, data)
-                                                                    }}
-                                                                    value={m.value}
-                                                                />
+                                            
+                                               {
+                                                   !numeratorZero ?(
+                                                    <>
+                                                        <div className="row d-flex justify-content-center p-3 ">
+                                                            <div
+                                                                className="px-5   bg-white text-dark rounded-pill boxshadow   text-center py-1  lalezar h5  ">اطلاعات
+                                                                پــایه
                                                             </div>
+                                                        </div>
+                                                        <div className="row d-flex justify-content-center py-3 px-1">
+                                                            {this.state.menuItems.map((m, i) =>
+                                                                <div className="col-12 my-3 position-relative" key={i}>
+                                                                    <label htmlFor=""> {m.item}</label>
+                                                                    <div className="pt-2 pb-4 ">
+                                                                        <InputGenerator
+                                                                            readOnly={this.state.readOnly}
+                                                                            dispatch={this.props.dispatch}
+                                                                            type={m.item_type}
+                                                                            globalStorage={this.props.globalStorage}
+                                                                            placeholder={m.placeholder || m.place_holder}
+                                                                            options={m.options ? userActions.generateSelectLabelValue(m.options) : []}
+                                                                            onChange={(data) => {
+                                                                            this.onChangeInfo(m, data)
+                                                                            }}
+                                                                            value={m.value}
+                                                                        />
+                                                                    </div>
+
+                                                                </div>
+                                                            )}
 
                                                         </div>
-                                                    )}
-
-                                                </div>
-                                            </div>
-                                        }
-                                        <div className="monitor col ">
+                                                        <div className="monitor col ">
                                             {isCollector ? (
                                                     indicator.report_type === 'پرسشنامه' || indicator.report_type === 'چک لیست'
                                                         ?
@@ -980,6 +1069,14 @@ class IntervalValue_ extends Component {
                                         <div className="leg text-center">
                                             <img src={Payeh} alt="monitor_stand"/>
                                         </div>
+                                                    </>
+                                                   ):null
+                                               }
+                                               
+                                            </div>
+                                        }
+
+                                        
                                         <div className="d-flex w-100 justify-content-center pb-4">
                                             {isCollector &&
                                             <button
@@ -1234,7 +1331,6 @@ class SelectCollector_ extends Collector_Monitor {
 
     }
     addCollectors = (selectedUsers) => {
-        console.log(selectedUsers)
         this.setState({selectedUsers})
     }
     save = () => {
@@ -1471,7 +1567,6 @@ class SelectMonitor_ extends Collector_Monitor {
             user_id: '',
             wards: []
         })
-        console.log(monitors)
         this.setState({monitors})
     }
     getMonitors = () => {
@@ -1487,7 +1582,6 @@ class SelectMonitor_ extends Collector_Monitor {
                         id: monitor.user.id,
                     };
                     monitor.wards_old = [...monitor.wards];
-                    console.log(monitor)
                 })
                 this.setState({monitors});
             })
@@ -1579,7 +1673,6 @@ class SelectMonitor_ extends Collector_Monitor {
 
         }
         if (oldMonitors.length) {
-            console.log(oldMonitors)
             await oldMonitors.map(await this.updateIndicatorMonitor);
 
         }

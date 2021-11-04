@@ -1309,7 +1309,6 @@ export class IndicatorCollectorOrMonitor extends Component {
                     portalClassName="full_screen_modal monitorScreenModal"
                 >
                {/* top warning nav */}
-               <h1 className="text-white">monitor screen</h1>
                     {indicator && interval && (
                         <IntervalValue
                             addNewInterval={this.addNewInterval}

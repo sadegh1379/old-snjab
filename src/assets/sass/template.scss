@@ -851,6 +851,10 @@ input,textarea{
   cursor: default;
 }
 
+.pointer{
+  cursor:pointer !important;
+}
+
 .indicator-icon {
   font-size: 13px;
   position: absolute;
