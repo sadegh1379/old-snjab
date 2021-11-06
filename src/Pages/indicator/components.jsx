@@ -248,7 +248,6 @@ class IntervalValue_ extends Component {
                                 ],
                                 text
                             }
-
                             const res = await this.props.dispatch(userActions.API('post', '/v2/upload_indicator_formula_values', params));
                             userActions.successToast(res.data.message);
                             this.props.CloseModal(true);
@@ -339,7 +338,6 @@ class IntervalValue_ extends Component {
                 })
             }
         })
-        //console.log(menuItems,ward,questions)
         if (ward) {
 
             if (!interval.id) {
@@ -429,6 +427,8 @@ class IntervalValue_ extends Component {
         const {globalStorage, formula, isCollector, indicator, interval} = this.props;
         const {wards} = globalStorage;
         const {ward, num_help_popover, denum_help_popover, equal, description, questions, menuItems, checklist_info, messages , numeratorZero} = this.state;
+        console.log('indicator' , indicator)
+        
         return (
             <>
                 <Media query="(min-width: 770px)" render={() =>
@@ -570,7 +570,12 @@ class IntervalValue_ extends Component {
                                                                 <input
                                                                     type="text"
                                                                     placeholder={itm}
-                                                                    value={this.state['numerator_' + i]}
+                                                                    value={
+                                                                          indicator.has_menu_item &&
+                                                                          indicator.report_type !== 'چک لیست' &&
+                                                                          indicator.report_type !== 'پرسشنامه' 
+                                                                           ?  1 : this.state['numerator_' + i] 
+                                                                        }
                                                                     name={"numerator_" + i}
                                                                     className="border-0  text-center"
                                                                     style={{width: 100, fontSize: '.8em'}}

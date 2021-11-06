@@ -589,13 +589,11 @@ export class IndicatorCollectorOrMonitor extends Component {
                     intervals.map(interval => {
                         // set virtual interval average of interval from get_indicator_interval ...
                         //
-                        console.log(indicator.measure_interval)
                         if (indicator.measure_interval === "روزانه") {
                             const m = moment(
                                 this.props.globalStorage.year + "/01/01",
                                 "jYYYY/jMM/jDD"
                             ).jDayOfYear(interval.interval_number);
-                            console.log(m)
                             const month = m.jMonth();
                             const day = m.jDate();
                             if (!boxes[month]) {
@@ -825,7 +823,6 @@ export class IndicatorCollectorOrMonitor extends Component {
                         min,
                         max
                     };
-                    console.log(gauges1, gauges1Config)
                     this.setState({ gauges1, gauges1Config });
                 });
         });
@@ -871,7 +868,6 @@ export class IndicatorCollectorOrMonitor extends Component {
                             let value = null;
                             if (key === "کل بیمارستان") {
                                 if (['چک لیست', 'پرسشنامه', 'HIS'].indexOf(indicator.report_type) === -1) {
-                                    // console.log(indicator)
                                     const groupIntervals = userActions.groupBy(res.data.hospital, 'interval_number');
                                     let intervals = [];
 
@@ -884,7 +880,6 @@ export class IndicatorCollectorOrMonitor extends Component {
                                             value,
                                         })
                                     })
-                                    console.log(intervals)
                                     res.data.hospital = intervals;
                                 }
                                 const data = res.data.hospital.find(d => d.interval_number.toString() === cat.interval_number.toString());
@@ -1263,7 +1258,7 @@ export class IndicatorCollectorOrMonitor extends Component {
                                                             { isCollector ? this.returnPeriod(row) : this.returnPeriod(row.indicator)}
                                                         </td>
                                                         <td className={class_name}>
-                                                          { isCollector ?  row.main_ward ? row.main_ward : 'نامشخص' : row.indicator.main_ward ? row.indicator.main_ward : 'نامشخص'}
+                                                          { isCollector ?  row.main_ward_name ? row.main_ward_name : 'نامشخص' : row.indicator.main_ward_name ? row.indicator.main_ward_name : 'نامشخص'}
                                                         </td>
                                                         <td className={class_name}>
                                                              { isCollector ?  row.target ? row.target : '-' : row.indicator.target ? row.indicator.target : '-'}

@@ -819,7 +819,6 @@ function NewIndicatorListComponent(props) {
         setSelectedIds(ids)
     }
 
-    console.log('indicators :', indicators)
     const collectorTabelSearch = (name = '') => {
         const newState = collectors.filter(user => user.name.includes(name))
         setCollectors_f(newState)
@@ -831,10 +830,12 @@ function NewIndicatorListComponent(props) {
     }
 
     const returnPeriod = (data) => {
+        
         const name = data.measure_interval
         if (name === 'ماهانه' || name === 'سالانه' || name === 'سه ماه یکبار' || name === 'شش ماه یکبار') {
             return (
                 <p onClick={() => {
+                    setIndicator(data)
                     setPeriodicityModal(true)
                     getIndicatorPeriodicity(data.id)
                     setCurrentIndicatorId(data)
@@ -1010,7 +1011,7 @@ function NewIndicatorListComponent(props) {
                                                 </Badge>
                                             </Box>
                                             <Box component='td' className={class_name}>{getData(row)}</Box>
-                                            <Box component='td' className={class_name}>{row.main_ward ? row.main_ward : 'نامشخص'}</Box>
+                                            <Box component='td' className={class_name}>{row.main_ward_name ? row.main_ward_name : 'نامشخص'}</Box>
                                             <Box component='td' className={class_name}>
                                                 <img onClick={() => {
                                                     setCollectors(row.collectors)
@@ -1568,11 +1569,7 @@ function NewIndicatorListComponent(props) {
                                                     return (
                                                         <Box key={i} component='tr' className={` animated fadeIn`} >
                                                             <Box component='td' className={class_name}>
-                                                                {
-                                                                    peroidReturn(currentIndicator.measure_interval) === 1 ?
-                                                                        periodMonth[i % 4] : '-'
-                                                                }
-                                                                {/* سه ماهه اول */}
+                                                               {userActions.getIntervalTitle(indicator.measure_interval, item.interval_number)}
                                                             </Box>
                                                             <Box component='td' className={class_name}>
                                                                 {item.numerator}

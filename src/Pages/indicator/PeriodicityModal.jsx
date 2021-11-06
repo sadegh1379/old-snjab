@@ -8,6 +8,7 @@ import { Box, Grid } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles';
 import { Pagination } from '../../_components';
 import AcceptButton from '../../_components/AcceptButton';
+import { userActions } from '../../_actions';
 
 const useStyles = makeStyles(theme=>({
     modal: {
@@ -196,11 +197,7 @@ function PeriodicityModal({setPeriodicityModal , periodicityModal , periodData ,
                                                     return (
                                                         <Box key={i} component='tr' className={` animated fadeIn`} >
                                                             <Box component='td' className={class_name}>
-                                                                {/* {
-                                                                   peroidReturn(currentIndicator.measure_interval) === 1 ? 
-                                                                   periodMonth[i%4] : '-'
-                                                                } */}
-                                                                -
+                                                            {userActions.getIntervalTitle(currentIndicator.measure_interval, item.interval_number)}
                                                             </Box>
                                                             <Box component='td' className={class_name}>
                                                                 {item.numerator}

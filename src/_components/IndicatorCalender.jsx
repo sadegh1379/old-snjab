@@ -21,6 +21,7 @@ import {ChecklistView, IntervalValue} from "../Pages/indicator/components";
 import Media from 'react-media';
 import backIcon from '../assets/images/back.png';
 import {userConstants} from "../_constants";
+import DetailsChecklistTabel from './DetailsChecklistTabel';
 Modal.setAppElement('#root');
 
 
@@ -276,7 +277,6 @@ class IndicatorCalender extends Component {
                 {_id:c.user_id,name:c.firstname+' '+c.lastname,avatar:userConstants.SERVER_URL+c.avatar.url}
             })
     showMessages=item=>{
-        console.log(item)
 
         this.props.dispatch(userActions.API('get',`v2/indicator/answers/formula_record_comments?id=${item.id}`)).then(res=>{
             this.setState({
@@ -287,7 +287,6 @@ class IndicatorCalender extends Component {
         })
     }
    /* editFormulaRecord=(interval)=>{
-        console.log(interval);
         this.setState({
             interval,IsMonitorScreenOpen:true
         })
@@ -346,7 +345,6 @@ class IndicatorCalender extends Component {
         const eq_num = numerators.length > 0 ? userActions.math_map(numerators) : 1;
         const eq_denum = denumerators.length > 0 ? userActions.math_map(denumerators) : 1;
         const res=(eq_num / (eq_denum || 1)) * parseFloat(this.props.indicator.formula.multiplier);
-        //console.log(eq_num,eq_denum,this.props.indicator.formula.multiplier)
         return userActions.fixed(res);
 
         /*const is2Float=parseFloat(res.toFixed(2))?res.toFixed(2):0;
@@ -378,7 +376,6 @@ class IndicatorCalender extends Component {
         }
 
 
-        // console.log(index, indicator_id, day)
     }
 
     openDetailRecordsModal = (interval) => {
@@ -533,7 +530,6 @@ class IndicatorCalender extends Component {
                     })
                 }
             });
-        console.log(menuItems)
             this.setState({detailChecklistValue: res.data,checklist:true,questions,readOnly:true,menuItems})
         })
     }
@@ -637,7 +633,6 @@ class IndicatorCalender extends Component {
     openDetailChecklistModal = () => {
 
         this.getTotal().then(total => {
-
             const total_answers = total.data.hospital;
             this.setState({detailChecklist: true, total_answers}, () => this.getByChecklist())
 
@@ -660,14 +655,14 @@ class IndicatorCalender extends Component {
     closeDetailFormulaModal = () => {
         this.setState({detailFormula: false})
     }
-    getByChecklist = (pageForChecklist = 1) => {
+    getByChecklist = (pageForChecklist = 1 , ward = false , collector_id = false) => {
         const loader = <img src={Loading} className="d-block m-auto" alt="در حال پردازش اطلاعات" width={200}/>;
         this.setState({loader}, () => {
             let q = '';
             if (this.props.only_me) {
                 q += '&user_id=' + this.props.globalStorage.me.id+`&is_collector=${this.props.isCollector}`;
             }
-            this.props.dispatch(userActions.API('get', `/v2/indicator/answers/checklist_records?indicator_id=${this.state.indicator.id}&page=${pageForChecklist}&per=${this.state.per_page}${q}&ward=${this.state.filterward?this.state.filterward._id:''}`, null, false)).then(res => {
+            this.props.dispatch(userActions.API('get', `/v2/indicator/answers/checklist_records?indicator_id=${this.state.indicator.id}&page=${pageForChecklist}&per=${this.state.per_page}${q}&ward=${ ward ? ward :  this.state.filterward?this.state.filterward._id:''}&collector_id=${collector_id ? collector_id : ''}`, null, false)).then(res => {
                 this.setState({pageForChecklist, byChecklistRecords: res.data, loader: undefined},()=>{
                     if(res.data.length && this.state.selectedDetailRecode){
                         this.getDetailRecords(this.state.selectedDetailRecode);
@@ -730,7 +725,6 @@ class IndicatorCalender extends Component {
     }
     render() {
         const {questions,menuItems,filter,ward,filterward,wards,checklist_info,interval,indicator, selectedDetailRecode, total_answer_record, detailRecordModal, detailRecord, checklistDetailHeaders, formulaHeaders, byFormulaRecords, loader, per_page, total_answers, checklistHeaders, byChecklistRecords} = this.state;
-        console.log(selectedDetailRecode, filterward)
         return (
             <>
                 <div className="container shadow position-relative">
@@ -982,7 +976,7 @@ class IndicatorCalender extends Component {
                     portalClassName="full_screen_modal "
                 >
                     <div className="row bg-light py-3 flex-column justify-content-center align-items-center">
-                        <label className="py-1 mx-auto w-100 d-block" style={{maxWidth:350,fontSize:'.8em'}}>
+                        {/* <label className="py-1 mx-auto w-100 d-block" style={{maxWidth:350,fontSize:'.8em'}}>
                             <Select className="text-justify custom-select-2"
                                     value={filterward}
                                     name="filterward"
@@ -996,15 +990,15 @@ class IndicatorCalender extends Component {
                                     getOptionValue={opt => opt._id}
 
                             />
-                        </label>
-                        <HospitalTable
-                            /*totalPage={Math.ceil(total_answers / per_page)}*/
+                        </label> */}
+                        <DetailsChecklistTabel getByChecklist={this.getByChecklist} filterward={filterward} openDetailRecords={this.openDetailRecords}  data={byChecklistRecords} indicator={indicator}/>
+                        {/* <HospitalTable
                             pageOnChange={this.getByChecklist}
                             active={this.state.pageForChecklist}
                             headers={checklistHeaders}
                             rows={byChecklistRecords}
                             loader={loader}
-                        />
+                        /> */}
                         <button className="mx-auto px-5 my-5 d-block btn btn-outline-blue rounded-pill"
                                 onClick={this.closeDetailChecklistModal}>
                             بازگشت

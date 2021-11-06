@@ -69,7 +69,7 @@ export class InputGenerator extends Component{
               this.searchFn('','user');
           }
       }
-        console.log(this.props)
+        
     }
     getUser=(user_id)=>{
 

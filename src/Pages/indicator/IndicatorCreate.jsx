@@ -415,6 +415,7 @@ class IndicatorCreate extends React.Component {
         if (!this.props.globalStorage.indicators.length) {
             await this.props.dispatch(userActions.getIndicator(this.props.globalStorage.year))
         }
+        this.props.dispatch(userActions.getMe())
         if (!this.props.globalStorage.users.length && this.props.globalStorage.me) {
             this.props.dispatch(userActions.getUsers(this.props.globalStorage.me.hospital_id))
         }
