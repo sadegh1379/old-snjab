@@ -480,7 +480,7 @@ function DetailsChecklistTabel({ data, indicator , openDetailRecords , filterwar
 
 
     // states
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(true)
     const [page, setPage] = useState(1)
     const [query, setQuery] = useState('')
     const [currentIndicator, setCurrentIndicatorId] = useState(null)
@@ -567,13 +567,13 @@ function DetailsChecklistTabel({ data, indicator , openDetailRecords , filterwar
                         }
                     </Box>
                     {/* start Search */}
-                    <Box component='div' className={`${classes.searchContainer}  ${classes.hjhj}`} >
+                    {/* <Box component='div' className={`${classes.searchContainer}  ${classes.hjhj}`} >
                         <Box component='form' action="/action_page.php">
                             <Box value={query} onChange={(e) => setQuery(e.target.value)} component='input' className={classes.area} type="text" placeholder="جستجو در شاخص" name="search" />
                             <Box component='div' className={classes.search} >  <Search /></Box>
                         </Box>
-                    </Box>
-                    {/* end Search                  */}
+                    </Box> */}
+                    {/* end Search */}
                 </Box>
                 {/* end nav */}
 

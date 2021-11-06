@@ -41,6 +41,8 @@ class IndicatorCalender extends Component {
             boxes: null,
             detailModal: false,
             detailFormula: false,
+            detailFormulaCollector : null,
+            detailFormulaPeriod : null,
             formulaHeaders: [
                 {
                     title: 'ردیف',
@@ -137,7 +139,7 @@ class IndicatorCalender extends Component {
                     getData: (item, index) => {
                         return <div className="d-flex justify-content-center align-items-center">
                             {!this.props.only_me && <button className="btn btn-link" data-tip="حذف"  onClick={()=>this.deleteFormulaRecord(item.id)}><img src={trash} alt="حذف" width={30}/></button>}
-                            {/*<button className="btn btn-link" data-tip="ویرایش"  onClick={()=>this.editFormulaRecord(item)}><img src={EDIT} alt="ویرایش" width={30}/></button>*/}
+                            {/* <button className="btn btn-link" data-tip="ویرایش"  onClick={()=>this.editFormulaRecord(item)}><img src={EDIT} alt="ویرایش" width={30}/></button> */}
                             <button onClick={()=>this.showMessages(item)} className="btn btn-link" data-tip="مکاتبات"><img src={DoctorIcon} alt="مکاتبات" width={30}/></button>
                             {this.props.indicator.has_menu_item && <button onClick={()=>this.showDetailRecod(item)} className="btn btn-link" data-tip="جزئیات"><img src={TakmilIcon} alt="جزئیات" width={30}/></button>}
                             <ReactTooltip type="dark"/>
@@ -268,6 +270,8 @@ class IndicatorCalender extends Component {
         }else{
             this.setState({wards:this.props.wards})
         }
+        this.props.dispatch(userActions.getUsers(this.props.globalStorage.me.hospital_id))
+        
 
     }
     serializer=c=>({...c,_id:c.id,text:c.text,createdAt:c.created_at,user:
@@ -286,11 +290,11 @@ class IndicatorCalender extends Component {
             })
         })
     }
-   /* editFormulaRecord=(interval)=>{
+   editFormulaRecord=(interval)=>{
         this.setState({
             interval,IsMonitorScreenOpen:true
         })
-    }*/
+    }
     deleteFormulaRecord=(id)=>{
         this.props.dispatch(userActions.question("حذف رکورد","آیا از حذف رکورد مورد نظر مطمئن هستید؟")).then(res=>{
             if(res.value){
@@ -675,13 +679,14 @@ class IndicatorCalender extends Component {
 
     }
     getByFormula = (pageForFormula = [0], interval_number =[null]) => {
+        const {detailFormulaCollector , detailFormulaPeriod} = this.state;
         const loader = <img src={Loading} className="d-block m-auto" alt="در حال پردازش اطلاعات" width={200}/>;
         this.setState({loader}, () => {
             let q = '';
             if (this.props.only_me) {
                 q += '&user_id=' + this.props.globalStorage.me.id;
             }
-            this.props.dispatch(userActions.API('get', `/v2/indicator/answers/formula_records?interval_number=${interval_number === null ? "" : interval_number}&indicator_id=${this.state.indicator.id}&page=${pageForFormula}&per=${this.state.per_page}${q}&ward=${this.state.filterward?this.state.filterward._id:''}`, null, false)).then(res => {
+            this.props.dispatch(userActions.API('get', `/v2/indicator/answers/formula_records?interval_number=${interval_number === null ? "" : interval_number}&indicator_id=${this.state.indicator.id}&page=${pageForFormula}&per=${this.state.per_page}${q}&collector_id=${detailFormulaCollector ? detailFormulaCollector.id : ''}&period=${detailFormulaPeriod ? detailFormulaPeriod : ''}&ward=${this.state.filterward?this.state.filterward._id:''}`, null, false)).then(res => {
                 this.setState({pageForFormula, byFormulaRecords: res.data, loader: undefined});
 
             });
@@ -724,6 +729,7 @@ class IndicatorCalender extends Component {
 
     }
     render() {
+        
         const {questions,menuItems,filter,ward,filterward,wards,checklist_info,interval,indicator, selectedDetailRecode, total_answer_record, detailRecordModal, detailRecord, checklistDetailHeaders, formulaHeaders, byFormulaRecords, loader, per_page, total_answers, checklistHeaders, byChecklistRecords} = this.state;
         return (
             <>
@@ -884,7 +890,8 @@ class IndicatorCalender extends Component {
                         this.state.detailFormula &&
 
                         <div className="container-fluid py-5 bg-light">
-                            <label className="py-1 mx-auto w-100 d-block" style={{maxWidth:350,fontSize:'.8em'}}>
+                            <div className="d-flex justify-content-between align-items-center">
+                            <label className=" mx-auto w-50 d-block" style={{maxWidth:350,fontSize:'.8em'}}>
                                 <Select className="text-justify custom-select-2"
                                         value={filterward}
                                         name="filterward"
@@ -899,6 +906,38 @@ class IndicatorCalender extends Component {
 
                                 />
                             </label>
+                            <label className=" mx-auto w-50 d-block" style={{maxWidth:350,fontSize:'.8em'}}>
+                                <Select className="text-justify custom-select-2"
+                                        value={filterward}
+                                        name="filterward"
+                                        placeholder="دوره ارزیابی"
+                                        isClearable
+                                        onChange={(v,d)=>{userActions.handleChangeSelect.call(this,v,d,null,null,()=>{
+                                            this.getByFormula()
+                                        })}}
+                                        options={wards}
+                                        getOptionLabel={opt => opt.name}
+                                        getOptionValue={opt => opt._id}
+
+                                />
+                            </label>
+                            <label className=" mx-auto w-50 d-block" style={{maxWidth:350,fontSize:'.8em'}}>
+                                <Select className="text-justify custom-select-2"
+                                        value={this.state.detailFormulaCollector}
+                                        name="filterward"
+                                        placeholder="مسئول اندازه گیری"
+                                        isClearable
+                                        // onChange={(v,d)=>{userActions.handleChangeSelect.call(this,v,d,null,null,()=>{
+                                        //     this.getByFormula()
+                                        // })}}
+                                        onChange={(v)=>this.setState({detailFormulaCollector : v},this.getByFormula)}
+                                        options={this.props.globalStorage.users}
+                                        getOptionLabel={opt => (opt.fn + opt.ln)}
+                                        getOptionValue={opt => opt.id}
+
+                                />
+                            </label>
+                            </div>
                             <HospitalTable
                                 totalPage={Math.ceil(total_answers / per_page)}
                                 pageOnChange={this.getByFormula}
