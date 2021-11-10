@@ -208,7 +208,7 @@ class UsersSelect_ extends React.Component {
                     onRequestClose={this.closeModal}
                     style={customStyles}
                     contentLabel="User Modal"
-                    portalClassName="full_screen_modal selelctUsers"
+                    portalClassName="full_screen_modal modal_z_index selelctUsers"
                 >
 
                     <div className="py-3 bg-white rounded">
@@ -307,7 +307,7 @@ class UsersSelect_ extends React.Component {
                                                     return (
                                                         <button onClick={()=>this.toggleChecked(user)} className="btn btn-link w-100 d-flex bg-white iran-sans_Bold  border-0 text-center p-3 my-1  text-white rounded " key={index}>
                                                             <div className="col-4 text-blue">
-                                                               <i className={`fal ${this.userChecked(user.id)?'fa-check-square text-success':'fa-square'}`}/>
+                                                               <i className={`fa fa-2x ${this.userChecked(user.id)?'fa-check-square text-success':'fa-square text-primary'}`}/>
                                                             </div>
                                                             <div className="col-4 text-blue"> {user.firstname+' '+user.lastname}</div>
                                                             <div className="col-4 text-blue">{user.post || '-'}</div>

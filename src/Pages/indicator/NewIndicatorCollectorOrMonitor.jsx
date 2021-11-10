@@ -933,9 +933,7 @@ export class IndicatorCollectorOrMonitor extends Component {
         if (name === 'ماهانه' || name === 'سالانه' || name === 'سه ماه یکبار' || name === 'شش ماه یکبار') {
             return (
                 <p onClick={() => {
-                    if(data.report_type == 'پک لیست' || data.report_type == 'پرسشنامه'){
-                        this.detailIndicator(data)
-                    }else{
+                   
                         this.setState({
                             periodicityModal: true
                         })
@@ -943,7 +941,7 @@ export class IndicatorCollectorOrMonitor extends Component {
                         this.setState({
                             currentIndicator: data
                         })
-                    }
+                    
                   
                 }} style={{ textDecoration: 'underline', cursor: 'pointer' }}>{name}</p>
             )

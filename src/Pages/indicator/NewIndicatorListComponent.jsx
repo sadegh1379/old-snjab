@@ -779,7 +779,6 @@ function NewIndicatorListComponent(props) {
             userActions.failure('مسئول اندازه گیری را وارد کنید')
             return
         }
-        console.log('params :' , params)
         dispatch(userActions.API('post', `v2/add_indicator_collector`, params, true, false))
             .then(res => {
                 setCollectors([...collectors, ...res.data])
@@ -1471,6 +1470,7 @@ function NewIndicatorListComponent(props) {
                                                                         getOptionLabel={v => v.name}
                                                                         getOptionValue={v => v._id}
                                                                         isMulti
+                                                                        autoFocus={true}
                                                                     />
                                                                 </Box>
                                                             </td>
