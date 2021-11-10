@@ -17,7 +17,8 @@ const defualts={
     indicators:[],
     year:year || moment().jYear(),
     loading:0,
-    temp:{}
+    temp:{},
+    
 }
 
 

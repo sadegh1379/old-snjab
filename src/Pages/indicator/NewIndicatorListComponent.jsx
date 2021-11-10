@@ -30,7 +30,7 @@ import ersal from '../../assets/images/ersal.png'
 import { userConstants } from '../../_constants';
 import PeopleSelect from '../../_components/PeopleSelect';
 import RejectButton from '../../_components/RejectButton';
-
+import {UsersSelect} from '../../_components/UsersSelect'
 
 
 
@@ -360,7 +360,7 @@ const useStyles = makeStyles(theme => ({
         backgroundColor: '#104c82',
         borderRadius: '39px',
         paddingRight: '39px',
-        color: 'aliceblue',
+        color: '#fff !important',
         fontSize: '14px',
         marginLeft: '-4px',
         fontWeight: 'bold',
@@ -369,7 +369,7 @@ const useStyles = makeStyles(theme => ({
         transition: ".5s",
         border: '1px solid #fff',
         '&:hover': {
-            color: '#104c82',
+            color: '#104c82 !important',
             backgroundColor: 'white',
             border: '1px solid #104c82',
 
@@ -393,7 +393,7 @@ const useStyles = makeStyles(theme => ({
     search2: {
         color: '#969696',
         marginTop: '-30px',
-        marginRight: '298px',
+        marginRight: '100px',
     },
     area2: {
         border: '1px solid #cac8c8',
@@ -426,7 +426,7 @@ const useStyles = makeStyles(theme => ({
         backgroundColor: '#104c82',
         borderRadius: '39px',
         paddingRight: '39px',
-        color: 'aliceblue',
+        color: '#fff !important',
         fontSize: '14px',
         fontWeight: 'bold',
         textDecoration: 'none',
@@ -434,7 +434,7 @@ const useStyles = makeStyles(theme => ({
         transition: ".5s",
         border: '1px solid #fff',
         '&:hover': {
-            color: '#104c82',
+            color: '#104c82 !important',
             backgroundColor: 'white',
             border: '1px solid #104c82',
 
@@ -750,24 +750,44 @@ function NewIndicatorListComponent(props) {
             })
     }
 
-    const sentCollectorsIds = () => {
+    // const sentCollectorsIds = () => {
+    //     const params = {
+    //         indicator_id: currentIndicator.id,
+    //         collector: selectedIds
+    //     }
+    //     if (selectedIds.length <= 0) {
+    //         userActions.failure('مسئول اندازه گیری را وارد کنید')
+    //         return
+    //     }
+    //     dispatch(userActions.API('post', `v2/add_indicator_collector`, params, true, false))
+    //         .then(res => {
+    //             setCollectors([...collectors, ...res.data])
+    //             setCollectors_f([...collectors_f, ...res.data])
+    //             userActions.successToast('کاربر با موفقیت ثبت شد')
+    //         })
+    //     setSelectedIds([])
+    //     setAddCollectorUserModal(false)
+
+    // }
+
+    const addNewCollector = (ids)=>{
         const params = {
-            indicator_id: currentIndicator.id,
-            collector: selectedIds
-        }
-        if (selectedIds.length <= 0) {
+                    indicator_id: currentIndicator.id,
+                    collector: ids.map(i=>i.id)
+                }
+        if (ids.length <= 0) {
             userActions.failure('مسئول اندازه گیری را وارد کنید')
             return
         }
+        console.log('params :' , params)
         dispatch(userActions.API('post', `v2/add_indicator_collector`, params, true, false))
             .then(res => {
                 setCollectors([...collectors, ...res.data])
                 setCollectors_f([...collectors_f, ...res.data])
                 userActions.successToast('کاربر با موفقیت ثبت شد')
-            })
-        setSelectedIds([])
-        setAddCollectorUserModal(false)
-
+             })
+                setSelectedIds([])
+                setAddCollectorUserModal(false)
     }
 
     const sentNewMonitor = () => {
@@ -794,6 +814,7 @@ function NewIndicatorListComponent(props) {
 
         setMonitorUser(null)
         setMonitorWard(null)
+        setShowMonitorAddBox(false)
     }
 
     const searchCollerctorUsers = (id) => {
@@ -889,6 +910,8 @@ function NewIndicatorListComponent(props) {
                 break;
         }
     }
+    console.log('indicator :' , indicators)
+
     return (
 
         <Box component='div' className={classes.container}>
@@ -1250,14 +1273,22 @@ function NewIndicatorListComponent(props) {
                     <div className={classes.paper}>
                         <div className={classes.modalHead}>
                             <CloseIcon style={{ cursor: 'pointer' }} onClick={hideModal} />
-                            <p style={{ borderRight: '1px solid #fff', marginRight: 10, fontWeight: 'bold', paddingRight: 10 }}>مسئـول اندازه گیری</p>
+                            <p style={{ borderRight: '1px solid #fff', margin: 10, fontWeight: 'bold', paddingRight: 10 }}>مسئـول اندازه گیری</p>
                         </div>
                         <div className={classes.modalBody}>
                             <div style={{ marginTop: '30px', margin: '20px' }}>
                                 <Box component='div' className={classes.container2}>
                                     {/* start Header */}
                                     <Box component='div' className={classes.Header2}>
-                                        <Box onClick={() => { setAddCollectorUserModal(true) }} component='div' className={classes.Add} > <a className={classes.AddButon}>افـزودن</a></Box>
+                                    <UsersSelect className="btn"
+                                                            // selectedUsers={this.state.selectedUsers}
+                                                            submit={addNewCollector}
+                                                            >
+                                        <Box  component='div' className={classes.Add} > <a className={classes.AddButon}>افـزودن</a></Box>
+                                    </UsersSelect>
+
+                                    {/* <Box onClick={() => { setAddCollectorUserModal(true) }} component='div' className={classes.Add} > <a className={classes.AddButon}>افـزودن</a></Box> */}
+
                                     </Box>
                                     {/* end Header */}
                                     <Box component='div' className={classes.kol2} >
@@ -1266,7 +1297,7 @@ function NewIndicatorListComponent(props) {
                                         <Box component='div' className={classes.searchContainer2}  >
                                             <Box component='form' action="/action_page.php">
                                                 <Box component='input' onKeyUp={(e) => collectorTabelSearch(e.target.value)} className={classes.area2} type="text" placeholder="جستجو  " />
-                                                <Box component='div' className={classes.search2} >  <Search /></Box>
+                                                <Box component='div' className={classes.search2} >  <Search style={{marginLeft:'20px'}}/></Box>
                                             </Box>
                                         </Box>
                                         {/* end search */}
@@ -1328,7 +1359,7 @@ function NewIndicatorListComponent(props) {
 
                                 </Box>
                                 <Box component="div" style={{ marginTop: '30px' }}>
-                                    <Grid container direction='row' justify='space-evenly' >
+                                    <Grid container direction='row' justifyContent='space-evenly' >
                                         <AcceptButton onclick={hideModal} title="بازگشت" w="30%" h={40} />
                                     </Grid>
                                 </Box>
@@ -1354,7 +1385,7 @@ function NewIndicatorListComponent(props) {
                     <div className={classes.paper}>
                         <div className={classes.modalHead}>
                             <CloseIcon style={{ cursor: 'pointer' }} onClick={hideModal} />
-                            <p style={{ borderRight: '1px solid #fff', marginRight: 10, fontWeight: 'bold', paddingRight: 10 }}>مسئـولین  پایش</p>
+                            <p style={{ borderRight: '1px solid #fff', margin: 10, fontWeight: 'bold', paddingRight: 10 }}>مسئـولین  پایش</p>
                         </div>
                         <div className={classes.modalBody}>
                             <div style={{ marginTop: '30px', margin: '20px' }}>
@@ -1372,7 +1403,7 @@ function NewIndicatorListComponent(props) {
                                         <Box component='div' className={classes.searchContainer2}  >
                                             <Box component='form' action="/action_page.php">
                                                 <Box component='input' onKeyUp={(e) => monitorsTabelSearch(e.target.value)} className={classes.area2} type="text" placeholder="جستجو  " />
-                                                <Box component='div' className={classes.search2} >  <Search /></Box>
+                                                <Box component='div' className={classes.search2} >  <Search style={{marginLeft:'20px'}} /></Box>
                                             </Box>
                                         </Box>
                                         {/* end search */}
@@ -1438,7 +1469,7 @@ function NewIndicatorListComponent(props) {
                                                                         onChange={(e) => setMonitorWard(e)}
                                                                         options={wards}
                                                                         getOptionLabel={v => v.name}
-                                                                        getOptionValue={v => v.id}
+                                                                        getOptionValue={v => v._id}
                                                                         isMulti
                                                                     />
                                                                 </Box>
@@ -1479,7 +1510,7 @@ function NewIndicatorListComponent(props) {
 
                                 </Box>
                                 <Box component="div" style={{ marginTop: '300px' }}>
-                                    <Grid container direction='row' justify='space-evenly' >
+                                    <Grid container direction='row' justifyContent='space-evenly' >
                                         <AcceptButton onclick={hideModal} title="بازگشت" w="30%" h={40} />
                                     </Grid>
                                 </Box>
@@ -1505,15 +1536,16 @@ function NewIndicatorListComponent(props) {
                     <div className={classes.paper}>
                         <div className={classes.modalHead}>
                             <CloseIcon style={{ cursor: 'pointer' }} onClick={hideModal} />
-                            <p style={{ borderRight: '1px solid #fff', marginRight: 10, fontWeight: 'bold', paddingRight: 10 }}>انتخاب اعضا</p>
+                            <p style={{ borderRight: '1px solid #fff', margin: 10, fontWeight: 'bold', paddingRight: 10 }}>انتخاب اعضا</p>
                         </div>
                         <div className={classes.modalBody}>
                             <div style={{ marginTop: '30px', margin: '40px' }}>
-                                <PeopleSelect userHas={searchCollerctorUsers} handleSelectAll={handleSelectAll_c} PartnerSelectedList={selectedIds} delPartnerSelected={delId_c} setPartnerSelected={addSelectedId_c} />
+                                {/* <PeopleSelect handleSelectAll={handleSelectAll_c} PartnerSelectedList={selectedIds} delPartnerSelected={delId_c} setPartnerSelected={addSelectedId_c} /> */}
+                               
                                 <Box component="div" className={classes.AcceptButton}>
                                     <Grid container direction='row' justify='space-evenly' >
                                         <AcceptButton
-                                            onclick={sentCollectorsIds}
+                                            // onclick={sentCollectorsIds}
                                             title="ثبت" w="30%" h={40} />
                                         <RejectButton onclick={() => setAddCollectorUserModal(false)} title="انصـراف" w="30%" h={40} />
                                     </Grid>

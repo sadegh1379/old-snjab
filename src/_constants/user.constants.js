@@ -14,8 +14,10 @@ export const userConstants = {
     HOSPITALS: 'HOSPITALS',
     COMMITTEES: 'COMMITTEES',
     ALL_ANSWERER_INFO_MENU_ITEMS: 'ALL_ANSWERER_INFO_MENU_ITEMS',
-    SERVER_URL:`https://etebarbakhshii.ir/`,
-    SERVER_URL_2:`https://etebarbakhshii.ir`,
+    // SERVER_URL:`https://etebarbakhshii.ir/`,
+    // SERVER_URL_2:`https://etebarbakhshii.ir`,
+    SERVER_URL:`https://back.snjab.ir/`,
+    SERVER_URL_2:`https://back.snjab.ir`,
     SNJAB_URL:'https://snjab.ir/',
     COLORS:['#f00','#ffbb18','#0063d1','#2f9693','#ea8b47','#c62bfc','#b45a33','#f70264','#5e7cdd','#02ccf7','#92c020','#c93253','#ffb67b','#9a59b5','#8d4a28','#d8659b']
 

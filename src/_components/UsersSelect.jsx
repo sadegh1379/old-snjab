@@ -13,7 +13,8 @@ Modal.setAppElement('#root');
 
 const customStyles = {
     overlay: {
-        position: 'fixed',
+        // position: 'fixed',
+        zIndex : 1000,
         top: 0,
         left: 0,
         right: 0,

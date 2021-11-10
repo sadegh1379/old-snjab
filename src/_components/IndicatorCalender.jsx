@@ -15,6 +15,7 @@ import EDIT from '../assets/images/edit-flat.png';
 import TakmilIcon from '../assets/images/takmilchecklist.svg';
 import Gauge from '../assets/images/gauge.png';
 import DoctorIcon from '../assets/images/doctor.png';
+import EditIcon from '../assets/images/edit.png'
 import {CalendarInterval, HospitalTable, InputGenerator} from './index';
 import {userActions} from "../_actions";
 import {ChecklistView, IntervalValue} from "../Pages/indicator/components";
@@ -138,10 +139,10 @@ class IndicatorCalender extends Component {
                     title: 'عملیات',
                     getData: (item, index) => {
                         return <div className="d-flex justify-content-center align-items-center">
-                            {!this.props.only_me && <button className="btn btn-link" data-tip="حذف"  onClick={()=>this.deleteFormulaRecord(item.id)}><img src={trash} alt="حذف" width={30}/></button>}
-                            {/* <button className="btn btn-link" data-tip="ویرایش"  onClick={()=>this.editFormulaRecord(item)}><img src={EDIT} alt="ویرایش" width={30}/></button> */}
-                            <button onClick={()=>this.showMessages(item)} className="btn btn-link" data-tip="مکاتبات"><img src={DoctorIcon} alt="مکاتبات" width={30}/></button>
-                            {this.props.indicator.has_menu_item && <button onClick={()=>this.showDetailRecod(item)} className="btn btn-link" data-tip="جزئیات"><img src={TakmilIcon} alt="جزئیات" width={30}/></button>}
+                            {!this.props.only_me && <button className="btn btn-link p-0" data-tip="حذف"  onClick={()=>this.deleteFormulaRecord(item.id)}><img src={trash} alt="حذف" width={30}/></button>}
+                            <button className="btn btn-link p-0" data-tip="ویرایش"  onClick={()=>this.editFormulaRecord(item)}><img src={EDIT} alt="ویرایش" width={30}/></button>
+                            <button onClick={()=>this.showMessages(item)} className="btn btn-link p-0" data-tip="مکاتبات"><img src={DoctorIcon} alt="مکاتبات" width={30}/></button>
+                            {this.props.indicator.has_menu_item && <button onClick={()=>this.showDetailRecod(item)} className="btn btn-link p-0" data-tip="جزئیات"><img src={TakmilIcon} alt="جزئیات" width={30}/></button>}
                             <ReactTooltip type="dark"/>
                         </div>
                     },
