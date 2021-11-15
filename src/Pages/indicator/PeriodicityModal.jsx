@@ -181,9 +181,9 @@ function PeriodicityModal({setPeriodicityModal , periodicityModal , periodData ,
                                         <thead>
                                             <Box component='tr' className={classes.tr}>
                                                 <Box component='th' className={classes.th}>دوره تنـاوب</Box>
-                                                <Box component='th' className={classes.th}>عنوان صورت فرمول</Box>
-                                                <Box component='th' className={classes.th}>عنوان مخرج فرمول</Box>
-                                                <Box component='th' className={classes.th}>عدد کل (واحد اندازه گیری)</Box>
+                                                <Box component='th' className={classes.th}>صورت ()</Box>
+                                                <Box component='th' className={classes.th}>مخرج ()</Box>
+                                                <Box component='th' className={classes.th}>{`عدد کل (${currentIndicator.measurement_unit})`}</Box>
                                             </Box>
                                         </thead>
                                         <tbody>
@@ -206,7 +206,7 @@ function PeriodicityModal({setPeriodicityModal , periodicityModal , periodData ,
                                                                 {item.denumerator}
                                                             </Box>
                                                             <Box component='td' className={class_name}>
-                                                                % {item.average}
+                                                                 {item.average}
                                                             </Box>
                                                         </Box>
                                                     )

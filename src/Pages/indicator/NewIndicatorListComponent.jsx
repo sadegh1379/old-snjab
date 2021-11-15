@@ -289,11 +289,26 @@ const useStyles = makeStyles(theme => ({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    actionModalStyle:{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height : '100%'
+    },
+    actionModalPaperStyle:{
+        backgroundColor: theme.palette.background.paper,
+        boxShadow: theme.shadows[5],
+        width: '80%',
+        height: "90%",
+        overflow: 'hidden',
+        borderRadius: 10,
+        overflowY: 'scroll'
+    },
     paper: {
         backgroundColor: theme.palette.background.paper,
         boxShadow: theme.shadows[5],
         width: '80%',
-        height: 500,
+        height: "90%",
         overflow: 'hidden',
         borderRadius: 10,
         overflowY: 'scroll'
@@ -956,6 +971,7 @@ function NewIndicatorListComponent(props) {
                         <Box component='option' value="">همه</Box>
                         <Box component='option' value="چک لیست" >چک لیست</Box>
                         <Box component='option' value="پرسشنامه">پرسشنامه</Box>
+                        <Box component='option' value="سایر موارد">سایر موارد</Box>
                         <Box component='option' value="HIS">HIS</Box>
 
                     </Box>
@@ -1056,7 +1072,7 @@ function NewIndicatorListComponent(props) {
                                                 }
 
                                             </Box>
-                                            <Box component='td' className={class_name}>{row.target.length ? (<p style={{ textDecoration: 'underline' }}>{row.target}</p>) : '-'}</Box>
+                                            <Box component='td' className={class_name}>{row.target.length ? (<p >{row.target}</p>) : '-'}</Box>
                                             <Box component='td' className={class_name}>
                                                 <MoreVert
                                                     onClick={() => {
@@ -1090,7 +1106,7 @@ function NewIndicatorListComponent(props) {
             <Modal
                 aria-labelledby="transition-modal-title"
                 aria-describedby="transition-modal-description"
-                className={classes.modal}
+                className={classes.actionModalStyle}
                 open={actionModal}
                 onClose={() => hideModal()}
                 closeAfterTransition
@@ -1100,7 +1116,7 @@ function NewIndicatorListComponent(props) {
                 }}
             >
                 <Fade in={actionModal}>
-                    <div className={classes.paper}>
+                    <div className={classes.actionModalPaperStyle}>
                         <div className={classes.modalHead}>
                             <CloseIcon style={{ cursor: 'pointer' }} onClick={hideModal} />
                             <p style={{ borderRight: '1px solid #fff', margin: 10, fontWeight: 'bold', paddingRight: 10 }}>عملیات</p>
@@ -1568,7 +1584,9 @@ function NewIndicatorListComponent(props) {
                     timeout: 500,
                 }}
             >
-                <Fade in={periodicityModal}>
+                {
+                    currentIndicator !== null ?
+                    <Fade in={periodicityModal}>
                     <div className={classes.paper}>
                         <div className={classes.modalHead}>
                             <CloseIcon style={{ cursor: 'pointer' }} onClick={hideModal} />
@@ -1585,9 +1603,9 @@ function NewIndicatorListComponent(props) {
                                         <thead>
                                             <Box component='tr' className={classes.tr}>
                                                 <Box component='th' className={classes.th}>دوره تنـاوب</Box>
-                                                <Box component='th' className={classes.th}>عنوان صورت فرمول</Box>
-                                                <Box component='th' className={classes.th}>عنوان مخرج فرمول</Box>
-                                                <Box component='th' className={classes.th}>عدد کل (واحد اندازه گیری)</Box>
+                                                <Box component='th' className={classes.th}>صورت ()</Box>
+                                                <Box component='th' className={classes.th}>مخرج ()</Box>
+                                                <Box component='th' className={classes.th}>{`عدد کل (${currentIndicator.measurement_unit})`}</Box>
                                             </Box>
                                         </thead>
                                         <tbody>
@@ -1610,7 +1628,7 @@ function NewIndicatorListComponent(props) {
                                                                 {item.denumerator}
                                                             </Box>
                                                             <Box component='td' className={class_name}>
-                                                                % {item.average}
+                                                                 {item.average}
                                                             </Box>
                                                         </Box>
                                                     )
@@ -1642,7 +1660,9 @@ function NewIndicatorListComponent(props) {
                             </div>
                         </div>
                     </div>
-                </Fade>
+                </Fade> : null
+                }
+             
             </Modal>
 
 

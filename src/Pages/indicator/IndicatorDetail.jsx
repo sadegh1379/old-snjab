@@ -182,6 +182,10 @@ class IndicatorDetail extends React.Component {
 
 
     }
+
+    openReport = (indicator_id) => {
+        window.location.href=`/indicator/dashboard/${indicator_id}`;
+    }
     render() {
         const {indicator,numerator_help_popover,denumerator_help_popover,boxes,loader,per_page} = this.state;
         return (
@@ -197,6 +201,7 @@ class IndicatorDetail extends React.Component {
                         indicator={indicator}
                         intervals={boxes}
                         only_me={false}
+                        openReport={this.openReport}
                         openDetailModal={this.openDetailModal}
                         detailFormula={indicator.report_type!=='چک لیست' && indicator.report_type!=='پرسشنامه'?true:undefined}
                         detailChecklist={indicator.report_type==='چک لیست' || indicator.report_type==='پرسشنامه'?true:undefined}
