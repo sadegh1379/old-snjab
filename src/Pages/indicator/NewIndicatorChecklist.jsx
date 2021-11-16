@@ -2,7 +2,12 @@ import React from 'react'
 import {connect} from 'react-redux';
 import {Routes, Questions, CollapseComp, HospitalTable} from "../../_components";
 import {userActions} from "../../_actions";
+import DeleteIcon from '../../assets/images/delete.png';
+import EditIcon from '../../assets/images/edit.png';
+import AcceptButton from "../../_components/AcceptButton";
+import RejectButton from "../../_components/RejectButton";
 import * as _ from "lodash";
+import ChecklistTabel from '../../_components/ChecklistTabel';
 
 class IndicatorChecklist extends React.Component {
     constructor(props) {
@@ -16,6 +21,7 @@ class IndicatorChecklist extends React.Component {
             description: '',
             number: '',
             components: [],
+            required_answer_items: [],
             questions: [],
             selectedType: null,
             questionGroupByTypes: {},
@@ -117,11 +123,7 @@ class IndicatorChecklist extends React.Component {
     }
     onChangeHasComponent = (state) => {
         if (state) {
-            if (!this.state.components.length) {
-                this.addComponent();
-                this.addComponent();
-            }
-
+         
         } else {
             if (this.state.components.length) {
                 const c = this.state.components.filter(c => c.title);
@@ -248,12 +250,12 @@ class IndicatorChecklist extends React.Component {
                     this.props.dispatch(userActions.API('get', `/v2/remove_indicator_question?question_id=${q.id}`)).then(res => {
 
                         questions.splice(i, 1);
-                        this.setState({questions});
+                        this.setState({questions},this.groupTypes);
 
                     });
                 } else {
                     questions.splice(i, 1);
-                    this.setState({questions});
+                    this.setState({questions},this.groupTypes);
                 }
 
             }
@@ -288,22 +290,54 @@ class IndicatorChecklist extends React.Component {
     }
 
     async toggleItems(item) {
-        const {selectedItems} = this.state;
-        const index = selectedItems.findIndex(i => i.answerer_info_menu_item_id === item.id);
+        const { selectedItems, items, required_answer_items } = this.state;
+        // const index = selectedItems.indexOf(item.id)
+        const index = selectedItems.findIndex(i => i.parent_item_id === item.id);
         if (index === -1) {
-            const itm = Object.assign({answerer_info_menu_item_id: item.id}, item);
-
-            selectedItems.push(itm);
+            selectedItems.push({parent_item_id : item.id , require : true})
         } else {
-            if (selectedItems[index].checked) {
-                await this.props.dispatch(userActions.API('delete', `/v2/delete_indicator_answerer_info_menu_items?item_id=${selectedItems[index].id}`, null, false))
-            }
-            selectedItems.splice(index, 1);
+            required_answer_items.splice(required_answer_items.indexOf(item.id), 1)
+            selectedItems.splice(index, 1)
+        }
 
+        const item_index = items.findIndex(i => i.id === item.id)
+        items[item_index]['checked'] = !items[item_index]['checked']
+        this.setState({
+            items,
+            selectedItems,
+            required_answer_items
+        })
+
+    }
+
+    findItemRequire = (id)=>{
+        const { selectedItems } = this.state;
+        const index = selectedItems.findIndex(i => i.parent_item_id === id);
+        return selectedItems[index].require
+
+    }
+
+    async toggleItemsRequire(item) {
+        const { selectedItems } = this.state;
+        const index = selectedItems.findIndex(i => i.parent_item_id === item.id);
+
+        if (index === -1) {
+            return
+        } else {
+            if (selectedItems[index].require) {
+                selectedItems[index].require = false
+            
+                // need set api ***************************************************
+                // await this.props.dispatch(userActions.API('delete', `/v2/delete_indicator_answerer_info_menu_items?item_id=${selectedItems[index].id}`, null, false))
+
+            } else {
+                selectedItems[index].require = true
+            }
 
         }
-        this.setState({selectedItems})
+        this.setState({ selectedItems })
     }
+
 
     async saveChecklist() {
         const {indicator_id, components, title, description, number, selectedItems, maximum_values} = this.state;
@@ -426,6 +460,7 @@ class IndicatorChecklist extends React.Component {
     }
 
     async componentDidMount() {
+        window.scrollTo(0,0)
         try {
             this.types = [];
             const {indicator_id} = this.state;
@@ -491,7 +526,90 @@ class IndicatorChecklist extends React.Component {
 
     }
 
+      // new ***************************************
+
+      showAddComponent = ()=>{
+        this.setState({
+            show_add_component:true
+        })
+    }
+
+    handleChangeNewComponent = (title)=>{
+        this.setState({
+            new_component_title : title
+        })
+    }
+
+    handleAddNewComponent = ()=>{
+        const {components , component_is_edit , component_edit_index , new_component_title } = this.state
+        if(new_component_title === ''){
+            userActions.failure('نام اجزا را وارد کنید')
+        }else{
+            if(component_is_edit){
+                const newComponents = components.map((item , i)=>{
+                    if(component_edit_index === i){
+                        item.title = new_component_title ;
+                        item.last_title = new_component_title;
+
+                    }
+                    return item
+                })
+                this.setState({
+                    components : newComponents,
+                    new_component_title : '',
+                    show_add_component : false ,
+                    component_is_edit : false ,
+                })
+            }else{
+                this.addComponent(this.state.new_component_title)
+                this.setState({
+                    new_component_title : '',
+                    show_add_component : false,
+                    component_is_edit : false
+                })
+            }
+            
+        }
+    }
+
+    editComponent = (item , index) =>{
+        this.setState({
+            new_component_title : item.title ,
+            component_is_edit : true,
+            component_edit_index : index,
+            show_add_component : true
+        })
+
+    }
+    editQuestion = (lastTitle, newTitle, select) => {
+
+        const newState = this.state.questions.map(q => {
+            if (q.title === lastTitle) {
+                q.title = newTitle
+                q.select = select
+            }
+            return q
+        })
+        this.setState({ questions: newState } ,this.groupTypes)
+    }
+    addQuestions2 = (title, s) => {
+        const { selectedComponent } = this.state;
+        const question = {
+            title: title,
+            select: {
+                label: s,
+                value: s
+            },
+            component: selectedComponent ? selectedComponent.title : 'default'
+        };
+        this.setState({ questions: [...this.state.questions, question] }, this.groupTypes)
+    }
+
+
+
+
     render() {
+         console.log('this state :' , this.state.selectedItems)
         const {indicator_id, title, description, number, components, questions, questionTypes, questionGroupByTypes, selectedType, valuesHeader, answers, selectedComponent, selectedItems, items} = this.state;
         return (
             indicator_id ?
@@ -516,7 +634,7 @@ class IndicatorChecklist extends React.Component {
                                        onChange={userActions.handleChangeInput.bind(this)}
                                        className="form-control  border-0 rounded-pill boxshadow  py-4"/>
                             </div>
-                            <div className={'col-lg-12 col-md-12 mt-4 text-right my-2'}>
+                            {/* <div className={'col-lg-12 col-md-12 mt-4 text-right my-2'}>
                                 <label htmlFor=""
                                        className="rounded-pill  px-4 py-1 titleInput bg-white iran-sans_Bold"> هــدف</label>
                                 <textarea className="inputCkeckList form-control rounded p-1 text-justify" cols="30"
@@ -525,34 +643,67 @@ class IndicatorChecklist extends React.Component {
                                           value={description}
                                           onChange={userActions.handleChangeInput.bind(this)}
                                 ></textarea>
-                            </div>
+                            </div> */}
                         </div>
                         <div className={'row d-flex justify-content-center mt-4'}>
                             <div className={'col-lg-6 col-md-10 col-sm-12'}>
                                 <CollapseComp
-                                    title='چک لیست/پرسشنامه دارای اطلاعات پـایه است؟'
+                                    title='آیا چک لیست/پرسشنامه مورد نظر دارای اطلاعات پایه ای می باشد؟'
                                     className='btn-primary'
                                     isOpenedByDefault={selectedItems.length > 0}
+                                    onChange={value => this.setState({ has_info: value })}
                                 >
 
-                                    <div className={' my-3 checkListBody boxshadow row mx-1 p-4  '}>
-                                        {items.map((itm, i) =>
-                                            <label key={i} htmlFor="" className={'align-items-center d-flex col-lg-6  '}
-                                                   onClick={() => {
-                                                       this.toggleItems(itm);
-                                                   }}>
-                                                <i className={`far  fa-2x px-3  ${selectedItems.find(item => item.answerer_info_menu_item_id === itm.id) ? 'fa-check-square text-primary' : 'fa-square text-black-50'}`}></i>
-                                                {itm.item}
-                                            </label>
-                                        )}
-                                    </div>
+                                    <div style={{maxHeight : '400px' , overflowY:'scroll'}} className={'  checkListBody boxshadow '}>
+                                        {items.map((itm, i) => {
+                                            return (
+                                                <div key={i}>
+                                                    <div  style={{width:'100%' ,padding :'5px' , backgroundColor : i%2 === 0 ? '#f1f1f1' : '#fff'}} className="d-flex justify-content-between  col-lg-12 col-12  align-items-center">
+                                                        <label key={i} htmlFor="" className={'d-flex align-items-center m-0'}
+                                                            onClick={() => { this.toggleItems(itm); }}>
+                                                            <i className={`far  fa-2x px-3  ${itm['checked'] == true ?
+                                                                'fa-check-square text-primary' : 'fa-square text-black-50'}`} />
+                                                            <span style={{fontSize:'11px' , fontFamily:'iransansBold'}}>{itm.item}</span>
 
+                                                        </label>
+                                                        <div style={{display:'flex'}}>
+                                                            {itm.options.length && itm.options.length < 4 ? 
+                                                                itm.options.map((n,i)=>{
+                                                                    return(
+                                                                        <p key={i} style={{fontSize:'11px' , fontFamily:'iransansBold'}}> { n } {i + 1 < itm.options.length ? ' - ' : null}</p>
+                                                                    )
+                                                                })
+                                                             : '-' }
+                                                        </div>
+                                                        {selectedItems.find(item => item.parent_item_id === itm.id)  ? (
+                                                                 <div>
+                                                                 <label htmlFor="" className={'d-flex align-items-center m-0'}
+                                                                                 onClick={() => { this.toggleItemsRequire(itm); }}
+                                                                                 >
+                                                                                 <i className={`far  fa-2x  px-1 ${this.findItemRequire(itm.id) ?
+                                                                                     'fa-check-square text-primary disabled' : 'fa-square text-black-50'}`} />
+                                                                                     <span style={{fontSize:'11px' , fontFamily:'iransansBold'}}>اجباری</span> 
+                                                                  </label>
+                                                             </div>
+                                                            ) : <div></div>}
+                                                    
+                                                    </div>
+
+
+
+                                                </div>
+                                            )
+                                        }
+                                        )}
+
+
+                                    </div>
                                 </CollapseComp>
 
                             </div>
                             <div className={'col-lg-6 col-md-10 col-sm-12'}>
                                 <CollapseComp
-                                    title='چک لیست/پرسشنامه دارای  اجزای مختلف است؟'
+                                    title='آیا چک لیست/پرسشنامه مورد نظر از اجزای مختلفی تشکیل شده است؟'
                                     className='btn-primary'
                                     isOpenedByDefault={components.length >= 1}
                                     onChange={this.onChangeHasComponent}
@@ -563,28 +714,61 @@ class IndicatorChecklist extends React.Component {
                                             <div className={'row mx-3'} key={i}>
                                                 <div className={'col-lg-10  col-md-12 mt-3'}>
                                                     <input type="text"
-                                                           name="title"
-                                                           value={item.title}
-                                                           onChange={(e) => {
-                                                               userActions.handleChangeSelect.call(this, e.target.value, {name: e.target.name}, 'components', i)
-                                                           }}
-                                                           className='form-control boxshadow  border-0 rounded-pill '/>
+                                                        name="title"
+                                                        value={item.title}
+                                                        // onChange={(e) => {
+                                                        //     userActions.handleChangeSelect.call(this, e.target.value,
+                                                        //         { name: e.target.name }, 'components', i)
+                                                        // }}
+                                                        className='form-control boxshadow  border-0 rounded-pill ' />
                                                 </div>
                                                 <div
                                                     className={'col-lg-2  col-md-12 mt-3 d-flex justify-content-center'}>
-                                                    <button className="btn text-white btn-danger rounded-pill "
-                                                            onClick={() => {
-                                                                this.deleteComponent(item, i)
-                                                            }}>حــذف
-                                                    </button>
+                                                    <img onClick={() => {
+                                                        this.deleteComponent(item, i)
+                                                    }}
+                                                        src={DeleteIcon} style={{ cursor: 'pointer', width: '35px', height: '35px' }} />
+                                                    <img
+                                                    onClick={()=>{
+                                                        this.editComponent(item,i)
+                                                    }}
+                                                     src={EditIcon} style={{ cursor: 'pointer', width: '35px', height: '35px' }} />
+
                                                 </div>
                                             </div>
                                         )}
+                                        {
+                                            this.state.show_add_component ? (
+                                             <div className={'row mx-3'} >
+                                                <div className={'col-lg-10  col-md-12 mt-3'}>
+                                                    <input type="text"
+                                                        name="title"
+                                                        value={this.state.new_component_title}
+                                                        autoFocus={true}
+                                                        onChange={(e) => {
+                                                            this.handleChangeNewComponent(e.target.value)
+                                                        }}
+                                                        className='form-control boxshadow  border-0 rounded-pill ' />
+                                                </div>
+                                                <div
+                                                    className={'col-lg-2  col-md-12 mt-3 d-flex justify-content-center'}>
+                                                    <AcceptButton  title="ثبت"  w={'100%'} h={'40px'}
+                                                    onclick={
+                                                       this.handleAddNewComponent
+                                                    }
+                                                    />
+                                                </div>
+                                            </div>
+                                            ) : null
+                                        }
+                                        
                                         <div className={'m-auto py-3 d-flex d-flex justify-content-center'}>
                                             <button className={'btn text-white btn-primary rounded-pill py-2 '}
-                                                    onClick={() => {
-                                                        this.addComponent()
-                                                    }}>افــزودن
+                                                onClick={() => {
+                                                    // this.addComponent()
+                                                    this.showAddComponent();
+                                                }}>
+                                                    افــزودن
                                             </button>
                                         </div>
                                     </div>
@@ -592,7 +776,9 @@ class IndicatorChecklist extends React.Component {
 
 
                             </div>
+
                         </div>
+                        <br/>
                         <br/>
                         {components.filter(c => c.title).length > 1 &&
                         <>
@@ -618,7 +804,7 @@ class IndicatorChecklist extends React.Component {
                         {
                             (components.length === 0 || selectedComponent) &&
                             <>
-                                <p className="iran-sans_Bold my-3">تعریف ســوالات</p>
+                                {/* <p className="iran-sans_Bold my-3">تعریف ســوالات</p>
                                 <div className="row mx-1 Define-questions boxshadow  py-4 px-4   ">
                                     <Questions disabled={q => q.id} deleteQuestion={this.deleteQuestion}
                                                questions={questions.filter(q => q.component === (components.length === 0 ? 'default' : selectedComponent.title))}
@@ -630,8 +816,16 @@ class IndicatorChecklist extends React.Component {
                                             className="align-items-center bg-primary btn circleButton d-flex justify-content-center text-white">
                                         <i className='fas fa-plus '></i>
                                     </button>
-                                </div>
+                                </div> */}
                                 <br/>
+                                <ChecklistTabel
+                                    questions={questions.filter
+                                        (q => q.component === (components.length === 0
+                                            ? 'default' : selectedComponent.title))}
+                                    addQ={this.addQuestions2}
+                                    deleteQuestion={this.deleteQuestion}
+                                    editQuestion={this.editQuestion}
+                                />
                             </>
                         }
 
@@ -683,5 +877,5 @@ class IndicatorChecklist extends React.Component {
 }
 
 
-const IndicatorChecklistComponent = connect((state) => ({globalStorage: state.globalStorage}))(IndicatorChecklist);
-export {IndicatorChecklistComponent}
+const NewIndicatorChecklist = connect((state) => ({globalStorage: state.globalStorage}))(IndicatorChecklist);
+export {NewIndicatorChecklist}

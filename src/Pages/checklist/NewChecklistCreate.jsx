@@ -287,9 +287,6 @@ class ChecklistCreate_ extends Component {
             return q
         })
         this.setState({ questions: newState } ,this.groupTypes)
-        
-
-
     }
 
     // ***********************************************
@@ -302,12 +299,12 @@ class ChecklistCreate_ extends Component {
                     this.props.dispatch(userActions.API('get',
                         `/v2/remove_indicator_question?question_id=${q.id}`)).then(res => {
                             questions.splice(i, 1);
-                            this.setState({ questions });
+                            this.setState({ questions },this.groupTypes);
 
                         });
                 } else {
                     questions.splice(i, 1);
-                    this.setState({ questions });
+                    this.setState({ questions },this.groupTypes);
                 }
 
             }

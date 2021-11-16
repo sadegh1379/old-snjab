@@ -367,6 +367,7 @@ function ChecklistTabel(props) {
                                 <Box component='tr' className="text-center animated zoomIn my-4">
                                     <td colSpan={2} className={classes.td} style={{ width: '80%', textAlign: 'center' }}>
                                         <input
+                                            autoFocus={true}
                                             value={title}
                                             onChange={(e) => setTitle(e.target.value)}
                                             type="text-aria"

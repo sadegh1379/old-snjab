@@ -28,7 +28,8 @@ import {
     NewIndicatorCollectorOrMonitor,
     NewIndicatorListComponent,
     IndicatorDashbaord,
-    SafetyRelatedIndicatorComponent
+    SafetyRelatedIndicatorComponent,
+    NewIndicatorChecklist
 } from './Pages/indicator';
 
 
@@ -117,7 +118,9 @@ class App extends Component {
                     <PrivateRoute path="/indicator/list/detail/:id" component={IndicatorDetailComponent} exact/>
                     <PrivateRoute path="/indicator/list/create" component={IndicatorCreateComponent} exact/>
                     <PrivateRoute path="/indicator/list/edit/:id" component={IndicatorCreateComponent} exact/> 
-                    <PrivateRoute path="/indicator/list/checklist/:id" component={IndicatorChecklistComponent} exact/>
+                    <PrivateRoute path="/indicator/list/checklist/:id" component={NewIndicatorChecklist} exact/>
+                    <PrivateRoute path="/indicator/list/checklistt/:id" component={IndicatorChecklistComponent} exact/>
+
                     {/* <PrivateRoute path="/checklist/" component={ChecklistCreate} exact/> */}
                     <PrivateRoute path="/checklist/" component={CheckListIndexComponent} exact/>
                     <PrivateRoute path="/checklist/create" component={NewChecklistCreate} exact/>
