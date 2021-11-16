@@ -824,6 +824,7 @@ function NewIndicatorListComponent(props) {
         dispatch(userActions.API('post', `v2/add_indicator_monitor`, params, true, false))
             .then(res => {
                 userActions.successToast('کاربر با موفقیت ثبت شد')
+                console.log('res :' , res)
             })
 
         setMonitorUser(null)
@@ -1649,14 +1650,18 @@ function NewIndicatorListComponent(props) {
                                         )
                                     }
                                 </Box>
-
-                                <Box component="div" className={classes.AcceptButton}>
-                                    <Grid container direction='row' justify='space-evenly' >
-                                        <AcceptButton
-                                            // onclick={}
-                                            title="مشاهده مقادیر اندازه گیری شده" w="50%" h={40} />
-                                    </Grid>
-                                </Box>
+                                {
+                                    periodData.length && (
+                                        <Box component="div" className={classes.AcceptButton}>
+                                          <Grid container direction='row' justify='space-evenly' >
+                                              <AcceptButton
+                                                onclick={()=>window.location.href=`/indicator/list/detail/${currentIndicator.id}`}
+                                                title="مشاهده مقادیر اندازه گیری شده" w="50%" h={40} />
+                                         </Grid>
+                                      </Box>
+                                    )
+                                }
+                              
                             </div>
                         </div>
                     </div>
