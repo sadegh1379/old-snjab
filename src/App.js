@@ -119,7 +119,6 @@ class App extends Component {
                     <PrivateRoute path="/indicator/list/create" component={IndicatorCreateComponent} exact/>
                     <PrivateRoute path="/indicator/list/edit/:id" component={IndicatorCreateComponent} exact/> 
                     <PrivateRoute path="/indicator/list/checklist/:id" component={NewIndicatorChecklist} exact/>
-                    <PrivateRoute path="/indicator/list/checklistt/:id" component={IndicatorChecklistComponent} exact/>
 
                     {/* <PrivateRoute path="/checklist/" component={ChecklistCreate} exact/> */}
                     <PrivateRoute path="/checklist/" component={CheckListIndexComponent} exact/>

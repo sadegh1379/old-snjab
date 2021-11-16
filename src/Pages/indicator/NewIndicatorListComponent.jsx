@@ -970,10 +970,10 @@ function NewIndicatorListComponent(props) {
                     <Box component='a' className={classes.active} href="#home">نحوه گزارش دهی</Box>
                     <Box component='select' onChange={(e) => setIndicatorType(e.target.value)} className={classes.drowp} >
                         <Box component='option' value="">همه</Box>
-                        <Box component='option' value="چک لیست" >چک لیست</Box>
-                        <Box component='option' value="پرسشنامه">پرسشنامه</Box>
-                        <Box component='option' value="سایر موارد">سایر موارد</Box>
-                        <Box component='option' value="HIS">HIS</Box>
+                        <Box component='option' value="checklist" >چک لیست</Box>
+                        <Box component='option' value="questionnaire">پرسشنامه</Box>
+                        <Box component='option' value="other">سایر موارد</Box>
+                        <Box component='option' value="his">HIS</Box>
 
                     </Box>
                     <Box component='div' className={classes.khatRight}></Box>

@@ -423,8 +423,6 @@ export class IndicatorCollectorOrMonitor extends Component {
             this.getMonitorIndicatorsCount();
             this.getMonitorIndicators();
         }
-
-
     }
     openDetailModal = () => {
         this.setState({ detailModal: true });
@@ -995,6 +993,7 @@ export class IndicatorCollectorOrMonitor extends Component {
 
         } = this.state;
         const newWards = [{name : 'همه بخش ها' , _id:''} , ...this.props.globalStorage.wards]
+        console.log('indicators :' , indicators)
         return (
 
             <>
@@ -1205,8 +1204,8 @@ export class IndicatorCollectorOrMonitor extends Component {
                                     <div component='div' className="indicator-searchContainer">
                                         <div component='form' action="/action_page.php">
                                             <input
-                                            
-                                            onChange={e => userActions.handleChangeInput.call(this, e, this.searchByQuery)}
+                                            onChange={(e)=>this.searchByQuery(e.target.value)}
+                                            // onChange={e => userActions.handleChangeInput.call(this, e, this.searchByQuery)}
                                             className="indicator-area" type="text" placeholder="جستجو در شاخص" name="search" />
                                             <div component='div' className="indicator-search" >
                                                 {/* <Search /> */}
@@ -1244,7 +1243,10 @@ export class IndicatorCollectorOrMonitor extends Component {
                                                             </div>
                                                         </td>
                                                         <td className={class_name}>
-                                                            { isCollector ?  row.basis : row.indicator.basis}
+                                                            { isCollector ?
+                                                              row.basis :
+                                                               row.indicator.basis
+                                                            }
                                                         </td>
                                                         <td className={class_name}>
                                                              { isCollector ?  row.title : row.indicator.title}
