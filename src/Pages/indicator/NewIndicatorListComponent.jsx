@@ -517,7 +517,7 @@ function NewIndicatorListComponent(props) {
 
     // states
     const [loading, setLoading] = useState(false)
-    const [page, setPage] = useState(1)
+    const [page, setPage] = useState(window.localStorage.getItem('indicator_page') ? JSON.parse(window.localStorage.getItem('indicator_page')) : 1)
     const [indicators, setIndicators] = useState([])
     const [indicator, setIndicator] = useState()
     const [pageInfo, setPageInfo] = useState(null)
@@ -575,11 +575,22 @@ function NewIndicatorListComponent(props) {
         if (!globalStorage.users.length && globalStorage.me) {
             dispatch(userActions.getUsers(globalStorage.me.hospital_id))
         }
+        const page = JSON.parse(window.localStorage.getItem('indicator_page'))
+        // if(page){   
+        //     setPage(page)
+        //     getIndicator(page);
 
-        getIndicator(1);
+        // }else{
+            getIndicator(page);
+        // }
         dispatch(userActions.getHospitals(false));
 
     }, [])
+    console.log('page' , page)
+
+    useEffect(()=>{
+        window.localStorage.setItem('indicator_page' ,page)
+    },[page])
 
     useEffect(() => {
         setLoading(true)
@@ -605,6 +616,7 @@ function NewIndicatorListComponent(props) {
     }, [ward, user, indicatorType, condition, query, page])
 
     const getIndicator = (page) => {
+        // const page = window.localStorage.getItem('incigator_page') ? window.localStorage.getItem('incigator_page') : page_ 
         setLoading(true)
         dispatch(userActions.API('get', `/v2/get_indicator_list?year=${globalStorage.year}&page=${page}&perpage=${per_page}&order=${orderBy}`, null, false)).then(res => {
             setPage(page)

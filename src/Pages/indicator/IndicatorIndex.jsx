@@ -56,6 +56,7 @@ class IndicatorIndex extends React.Component {
         this.props.history.goBack();
     }
     componentDidMount(){
+        window.localStorage.setItem('indicator_page' , 1)
         if(!this.props.globalStorage.indicators.length){
             this.props.dispatch(userActions.getIndicator(this.props.globalStorage.year))
         }
