@@ -90,7 +90,8 @@ class IndicatorDashbaord_ extends Component {
             ),
             charts_formula: userActions.generateSelectLabelValue(CHARTS.slice(0, 2)),
             chart_: "",
-            rotation:""
+            rotation:"",
+            params_indicator_id : null
         };
         this.setChart = this.setChart.bind(this);
     }
@@ -729,6 +730,7 @@ class IndicatorDashbaord_ extends Component {
                                         options={indicators}
                                         getOptionLabel={opt => opt.title}
                                         getOptionValue={opt => opt.id}
+                                        isDisabled={this.props.match.params.indicator_id == 'null' ? false : true}
                                     />
                                 </div>
                                 <div className="custom-select-box form-group text-right">

@@ -31,6 +31,10 @@ import { userConstants } from '../../_constants';
 import PeopleSelect from '../../_components/PeopleSelect';
 import RejectButton from '../../_components/RejectButton';
 import {UsersSelect} from '../../_components/UsersSelect'
+import Popover,{ArrowContainer} from 'react-tiny-popover'
+import ContentEditable from 'react-contenteditable'
+import {Print, SelectCollector, SelectMonitor} from "./components"
+import * as RModal from  "react-modal";
 
 
 
@@ -507,6 +511,9 @@ function NewIndicatorListComponent(props) {
     const newUsers = [{ id: '', fn: 'همه', ln: '' }, ...users]
 
 
+    // refs
+    const numerator = React.useRef();
+    const denumerator = React.useRef();
 
     // states
     const [loading, setLoading] = useState(false)
@@ -519,6 +526,8 @@ function NewIndicatorListComponent(props) {
     const [query, setQuery] = useState('')
     const [currentIndicator, setCurrentIndicatorId] = useState(null)
     const [indicator_data, setIndicatorData] = useState()
+    const [numerator_help_popover , setNumerator_help_popover] = useState(false)
+    const [denumerator_help_popover , setDenumerator_help_popover] = useState(false)
 
     // modals state
     const [collectors, setCollectors] = useState([])
@@ -544,7 +553,6 @@ function NewIndicatorListComponent(props) {
     const [periodicityModal, setPeriodicityModal] = useState(false)
     const [p_page, setP_page] = useState(1)
     const [p_pageInfo, setPPageInfo] = useState(null)
-    const [periodMonth, setPeriodMonth] = useState(['سه ماهه اول', 'سه ماهه دوم ', 'سه ماهه سوم', 'سه ماهه چهارم'])
     const [detailModal, setDetailModal] = useState(false)
 
 
@@ -910,6 +918,7 @@ function NewIndicatorListComponent(props) {
     const openDetailModal = (id) => {
         get_indicator(id)
         setDetailModal(true)
+        setActionModal(false)
     };
 
     const peroidReturn = (status) => {
@@ -1669,6 +1678,294 @@ function NewIndicatorListComponent(props) {
                 }
              
             </Modal>
+
+            {/* detail modal */}
+            <RModal
+                    isOpen={detailModal}
+                    shouldCloseOnOverlayClick={false}
+                    //   onAfterOpen={this.afterOpenModal}
+                    onRequestClose={()=>setDetailModal(false)}
+                    contentLabel="Detail Modal"
+                    portalClassName="full_screen_modal"
+                >
+                { indicator_data &&
+                <div className="Cource  indicator_detail">
+
+                    {/*headerIndeicator*/}
+                    <div className='container-fluid headerIndeicator'>
+                        <div className={'row d-flex justify-content-around   my-4 '}>
+                            <div className='col-lg-3    my-2 '>
+                                <div
+                                    className='text-center  rounded-pill py-2 text-dark shadow iran-sans_Bold bg-white '>{indicator_data.title}</div>
+                            </div>
+                            {indicator_data.code && <div className='col-lg-3    my-2 '>
+                                <div
+                                    className='text-center  rounded-pill  text-white shadow bg-navy-blue  py-2 iran-sans_Bold'>{indicator_data.code}</div>
+                            </div>}
+                        </div>
+                    </div>
+                    {/*form indicator state*/}
+                    <div className="container-fluid shadow rounded  py-5  bg-white" >
+                        <div className="row d-flex justify-content-center  ">
+
+                            {indicator_data.creation_date &&
+                            <div className={'col-lg-3 mt-4 '}>
+                                <p className='text-right' htmlFor=""> تاریخ تدوین</p>
+                                <div
+                                    className='rounded-pill py-2 dateBox d-flex justify-content-around align-items-center'>
+                                    <p className='dateText'>{indicator_data.creation_date}</p>
+                                    <i className="fal fa-calendar-alt fa-2x"></i>
+                                </div>
+                            </div>
+                            }
+                            {indicator_data.edit_date &&
+                                <div className={'col-lg-3 mt-4 '}>
+                                    <p className='text-right' htmlFor=""> تاریخ بازنگری</p>
+                                    <div
+                                        className='rounded-pill py-2 dateBox d-flex justify-content-around align-items-center'>
+                                        <p className='dateText'>{indicator_data.edit_date}</p>
+                                        <i className="fal fa-calendar-alt fa-2x"></i>
+                                    </div>
+                                </div>
+                            }
+
+                        </div>
+                        <div className={'row d-flex justify-content-center  my-4 p-xl-4 '}>
+                            {indicator_data.quality_dimension && <div className='col-xl-3 col-lg-3 col-md-6  my-3 '>
+                                <div className='text-center bg-pink rounded-pill py-2 text-white '><span
+                                    className={'iransansBold'}>بعد کیفیت:</span>
+                                    {indicator_data.quality_dimension.map((q,j)=><span key={j}> {q} {j+1<indicator_data.quality_dimension.length?',':''} </span>)}
+                                    </div>
+                            </div>}
+                            {indicator_data.report_type &&<div className='col-xl-3 col-lg-3 col-md-6  my-3 '>
+                                <div className='text-center bg-warning rounded-pill py-2 text-white'><span
+                                    className={'iransansBold'}> نحوه ی گزارش:</span>
+                                    <span> {indicator_data.report_type} </span></div>
+                            </div>}
+                            {indicator_data.source && <div className='col-xl-3 col-lg-3 col-md-6  my-3'>
+                                <div className='text-center bg-success rounded-pill py-2 text-white'><span
+                                    className={'iransansBold'}> منبع شاخص:</span>
+                                    <span> {indicator_data.source} </span></div>
+                            </div>}
+                            {indicator_data.measurement_unit && <div className='col-xl-3 col-lg-3 col-md-6  my-3'>
+                                <div className='text-center bg-light-blue rounded-pill py-2  text-white'><span
+                                    className={'iransansBold'}> واحد اندازه گیری:</span>
+                                    <span> {indicator_data.measurement_unit} </span></div>
+                            </div>}
+                            {indicator_data.desirability && <div className='col-xl-3 col-lg-3 col-md-6  my-3 '>
+                                <div className='text-center bg-danger rounded-pill py-2 text-white '><span
+                                    className={'iransansBold'}> مطلوبیت شاخص:</span>
+                                    <span> {indicator_data.desirability} </span></div>
+                            </div>}
+                            {indicator_data.basis && <div className='col-xl-3 col-lg-3 col-md-6  my-3'>
+                                <div className='text-center bg-purple rounded-pill py-2 text-white'><span
+                                    className={'iransansBold'}>   مبنـا شاخص:</span>
+                                    <span>  {indicator_data.basis} </span></div>
+                            </div>}
+                            {indicator_data.aspect && <div className='col-xl-3 col-lg-3 col-md-6  my-3'>
+                                <div className='text-center bg-navy-blue rounded-pill py-2 text-white'><span
+                                    className={'iransansBold'}> جنبه شاخص:</span> <span> {indicator_data.aspect}</span>
+                                </div>
+                            </div>}
+                            {indicator_data.indicator_type && <div className='col-xl-3 col-lg-3 col-md-6  my-3'>
+                                <div className='text-center bg-light-green rounded-pill py-2  text-white'><span
+                                    className={'iransansBold'}>   نـوع شاخص:</span>
+                                    <span> {indicator_data.indicator_type}</span></div>
+                            </div>}
+                        </div>
+
+                        <div className={'row  p-4'}>
+                            {indicator_data.definition && <div className={'col-lg-12 col-md-12 mt-4 text-center my-2'}>
+                                <label htmlFor="" className='rounded-pill  px-4 py-1 titleInput bg-white'>
+                                    تعریف شاخص و اهمیت موضوع
+                                </label>
+                                <div className="rounded box-border ">
+                                <p style={{textAlign: 'justify'}} 
+                                               className='p-10 mt-4 mb-4'>{indicator_data.definition}</p>
+                                    {/* {indicator.definition.map((item, index) => {
+                                        return (
+                                            <p style={{textAlign: 'justify'}} key={index}
+                                               className='p-10 mt-4 mb-4'>{item}</p>
+                                        )
+                                    })} */}
+                                </div>
+
+                            </div>}
+                            {indicator_data.logical_reasons_of_collecting && <div className={'col-lg-12 col-md-12 mt-4 text-center my-2 '}>
+                                <label htmlFor="" className="rounded-pill  px-4 py-1 titleInput bg-white"> دلایل
+                                    منطقـی جمع آوری شـاخص </label>
+                                <div className="rounded box-border ">
+                                    {indicator_data.logical_reasons_of_collecting && indicator_data.logical_reasons_of_collecting.map((item, index) => {
+                                        return (
+                                            <p style={{textAlign: 'justify'}} key={index}
+                                               className='p-10 mt-4 mb-4'>{item}</p>
+                                        )
+                                    })}
+                                </div>
+
+                            </div>}
+                        </div>
+                        <div className="row justify-content-center">
+
+                            <div className="calculation d-flex flex-wrap flex-column col-lg-8 align-items-center py-5 my-5 mx-auto" >
+
+                                <div className="row justify-content-end w-100">
+                                    <ContentEditable
+                                        innerRef={numerator}
+                                        name="numerator"
+                                        html={indicator_data.numerator} // innerHTML of the editable div
+                                        disabled={true} // use true to disable edition
+                                        onChange={(e)=>userActions.maskInput.call(this,e,'numerator',{className:"iran_sans_Bold text_muted"})} // handle innerHTML change
+                                        className="rounded-pill border-0 col-6 bg-white shadow-sm d-flex flex-wrap align-items-center justify-content-center py-2"
+                                        tagName='div'
+                                    />
+
+                                    <div className="d-flex justify-content-center col-2">
+                                        <Popover
+                                            isOpen={numerator_help_popover}
+                                            position={['top', 'right', 'left', 'bottom']} // preferred position
+                                            padding={10}
+                                            onClickOutside={() => this.setState({ numerator_help_popover: false })}
+                                            content={({ position, targetRect, popoverRect }) =>(
+                                                <ArrowContainer // if you'd like an arrow, you can import the ArrowContainer!
+                                                    position={position}
+                                                    targetRect={targetRect}
+                                                    popoverRect={popoverRect}
+                                                    arrowColor={'#1c94e0'}
+                                                    arrowSize={10}
+                                                >
+                                                    <div className="bg-blue rounded p-4">
+                                                        <p className="text-center pb-1 text-white">راهنمای صورت</p>
+                                                        <textarea className={`form-control ${indicator_data.numerator_help.indexOf('\n')>=0?'rounded':'rounded-pill'} border-0 `}
+                                                                  name="numerator_help"
+                                                                  value={indicator_data.numerator_help}
+                                                                  rows={indicator_data.numerator_help.split('\n').length || 1}
+
+                                                                  readOnly={true}
+                                                        />
+                                                    </div>
+                                                </ArrowContainer>
+                                            )}
+                                        >
+                                            <button onClick={()=>{
+                                                setNumerator_help_popover(!numerator_help_popover)
+                                            }} className="btn btn-blue rounded-circle d-flex justify-content-center align-items-center" style={{width:34,height:34}}><i
+                                                className="fas fa-question text-white"></i></button>
+                                        </Popover>
+                                    </div>
+                                </div>
+                                <div
+                                    className="row align-items-center justify-content-center w-100 pl-sm-5">
+                                    <input type="text" className="rounded-pill border-0 py-2 col-2 shadow-sm text-center"
+                                           name="multiplier"
+                                           readOnly={true}
+                                           value={indicator_data.multiplier}
+
+                                    />
+                                    <div className="text-center col-1 px-0">
+                                        <i className="fas fa-times"></i>
+                                    </div>
+                                    <div className="h-line col-7"></div>
+                                </div>
+                                <div className="row justify-content-end w-100">
+                                    <ContentEditable
+                                        innerRef={denumerator}
+                                        name="denumerator"
+                                        html={indicator_data.denumerator} // innerHTML of the editable div
+                                        disabled={true} // use true to disable edition
+                                        onChange={(e)=>userActions.maskInput.call(this,e,'denumerator',{className:"iran-sans_Bold text-muted"})} // handle innerHTML change
+                                        className="rounded-pill border-0 col-6 bg-white shadow-sm d-flex flex-wrap align-items-center justify-content-center py-2"
+                                        tagName='div'
+                                    />
+                                    <div className="d-flex justify-content-center col-2">
+                                        <Popover
+                                            isOpen={denumerator_help_popover}
+                                            position={['bottom', 'left','right','top']} // preferred position
+                                            padding={10}
+                                            onClickOutside={() => this.setState({ denumerator_help_popover: false })}
+                                            content={({ position, targetRect, popoverRect }) =>(
+                                                <ArrowContainer // if you'd like an arrow, you can import the ArrowContainer!
+                                                    position={position}
+                                                    targetRect={targetRect}
+                                                    popoverRect={popoverRect}
+                                                    arrowColor={'#1c94e0'}
+                                                    arrowSize={10}
+                                                >
+                                                    <div className="bg-blue rounded p-4 ">
+                                                        <p className="text-center pb-1 text-white">راهنمای مخرج</p>
+                                                        <textarea className={`form-control ${indicator_data.denumerator_help.indexOf('\n')>=0?'rounded':'rounded-pill'} border-0 `}
+                                                                  name="denumerator_help"
+                                                                  value={indicator_data.denumerator_help}
+                                                                  rows={indicator_data.denumerator_help.split('\n').length || 1}
+                                                                  readOnly={true}
+                                                        />
+                                                    </div>
+                                                </ArrowContainer>
+                                            )}
+                                        >
+                                            <button onClick={()=>{
+                                                setDenumerator_help_popover(!denumerator_help_popover)
+                                            }} className="btn btn-blue rounded-circle d-flex justify-content-center align-items-center" style={{width:34,height:34}}><i
+                                                className="fas fa-question text-white"></i></button>
+                                        </Popover>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div className="row d-flex justify-content-center ">
+                            <div
+                                className='d-flex flex-column align-items-center justify-content-center align-self-center col-lg-2'>
+                                <SelectCollector iconWidth={90} iconHeight={90} indicatorId={indicator_data.id}/>
+                                <span className='iran-sans_Bold my-2'>مسئولین جمع آوری</span>
+
+                            </div>
+                            {indicator_data.target!==null || indicator_data.upper_limit!==null || indicator_data.lower_limit!==null ?<div className="calculation-inputs flex-wrap d-flex justify-content-around col-lg-8 py-5 my-5">
+
+                                {indicator_data.target!==null && <div
+                                    className="d-flex flex-column align-items-center input-group-lg col-xl-2 col-lg-3 col-md-6 col-sm-9">
+                                    <h4 className="rounded-underline text-center color-dark lalezar w-100 pb-2">تارگت</h4>
+                                    <div className='box-target text-center py-3 mt-3'>
+                                        {indicator_data.target}
+                                    </div>
+                                </div>}
+
+                                {indicator_data.upper_limit!==null && <div
+                                    className="d-flex flex-column align-items-center input-group-lg col-xl-2 col-lg-3 col-md-6 col-sm-9">
+                                    <h4 className="rounded-underline text-center color-dark lalezar w-100 pb-2">حد بالا</h4>
+                                    <div className='box-target text-center py-3 mt-3'>
+                                        {indicator_data.upper_limit}
+                                    </div>
+                                </div>}
+
+                                {indicator_data.lower_limit!==null && <div
+                                    className="d-flex flex-column align-items-center input-group-lg col-xl-2 col-lg-3 col-md-6 col-sm-9">
+                                    <h4 className="rounded-underline text-center color-dark lalezar w-100 pb-2">حد
+                                        پایین</h4>
+                                    <div className='box-target text-center py-3 mt-3'>
+                                        {indicator_data.lower_limit}
+                                    </div>
+                                </div>}
+                            </div>
+                                :''}
+                            <div
+                                className='d-flex flex-column align-items-center justify-content-center align-self-center col-lg-2'>
+
+                                <SelectMonitor iconWidth={90} iconHeight={90} indicatorId={indicator_data.id}/>
+
+                                <span className='iran-sans_Bold my-2'>مسئولین پایش</span>
+                            </div>
+                        </div>
+                        <button onClick={()=>setDetailModal(false)} className="btn rounded-pill btn-outline-primary d-block mx-auto my-5 px-5">
+                            بازگشت
+                        </button>
+                    </div>
+                    {/*indicator formol*/}
+
+
+                </div>
+                }
+                </RModal>
 
 
         </Box>
