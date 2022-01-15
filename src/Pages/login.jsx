@@ -249,8 +249,8 @@ class Login extends React.Component{
         if(dev){
             window.location.href=`http://dev.snjab.ir/user_panel/#/?hospital=${hospital.id}&token=${token}`;
         }else{
-            window.location.href=`${userConstants.SNJAB_URL}user_panel/#/?hospital=${hospital.id}&token=${token}`;
-            // window.location.href=`/indicator/?hospital=${hospital.id}&token=${token}`;
+            // window.location.href=`${userConstants.SNJAB_URL}user_panel/#/?hospital=${hospital.id}&token=${token}`;
+            window.location.href=`/indicator/?hospital=${hospital.id}&token=${token}`;
        
         }
 

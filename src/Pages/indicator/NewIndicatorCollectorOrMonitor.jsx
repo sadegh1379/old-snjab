@@ -1183,6 +1183,7 @@ export class IndicatorCollectorOrMonitor extends Component {
                                     className="indicator-drowp"
                                     name="filter_by_ward_id"
                                     onChange={(e) => {
+                                       
                                         this.getCollectorIndicators(1, null, e.target.value)
                                         // userActions.handleChangeSelect.call(this, e.target.value, e.target.name, null, null, (f) => {
                                         //     this.getCollectorIndicators(1, null, e.target.value)

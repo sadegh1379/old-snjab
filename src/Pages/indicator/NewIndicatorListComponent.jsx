@@ -586,7 +586,6 @@ function NewIndicatorListComponent(props) {
         dispatch(userActions.getHospitals(false));
 
     }, [])
-    console.log('page' , page)
 
     useEffect(()=>{
         window.localStorage.setItem('indicator_page' ,page)
@@ -981,7 +980,7 @@ function NewIndicatorListComponent(props) {
 
                             newWard.map((w, i) => {
                                 return (
-                                    <Box key={i} component='option' value={w.id}>{w.name}</Box>
+                                    <Box key={i} component='option' value={w._id}>{w.name}</Box>
                                 )
                             })
                         }
